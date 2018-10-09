@@ -7,9 +7,9 @@ Proyecto final EDI 3 2018
     <ul><li>Gabriel</li></ul>
     <li>Modulos de conexión y uso de motores de base de datos:
         <ul>
-            <li>MariaDB(MySQL):  Nano Nobile</li>
+            <li>MariaDB(MySQL):  Nano</li>
             <li>SQLITE: Diego y Sebastián.</li>
-            <li>PostgreSQL: Leonardo Casales y Jona</li>
+            <li>PostgreSQL: Leonardo y Jona</li>
         </ul>
     </li>
     <li>Integrar biblioteca de tercero https://github.com/nlohmann/json con la interface de "DocumentGenerator". unordered_map<string, string> o directamente pasar de la consulta a la base de datos al tipo json:
@@ -19,14 +19,14 @@ Proyecto final EDI 3 2018
     </li>
     <li>Base Datos: implementar las tablas necesarias para Authentication y Authorization. Escribir los procedimientos de alta, baja y modificación de las tablas users, roles, actions:
         <ul>
-            <li>Facundo Campos</li>
+            <li>Facundo</li>
         </ul>
     </li>
     <li>QA: Pruebas contras las interfaces, no es necesario frameworks, pero pueden usar assert, etc:
         <ul>
             <li>Giulano</li>
             <li>Boris</li>
-            <li>Lucas Arostica</li>
+            <li>Lucas</li>
             <li>Hernán</li>
         </ul>
     </li>
