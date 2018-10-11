@@ -1,0 +1,202 @@
+body 
+{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    text-align: center;
+}
+.wrapper
+{
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    text-align: left;
+}
+.header h1 
+{
+    font-family: Verdana, Geneva, sans-serif;
+}
+.menu 
+{
+    width: 100%;
+    height: 25px;
+    padding-top: 5px;
+}
+.menu ul
+{
+    list-style-type: none;
+    width: 100%;
+    margin-top: 1px;
+    margin-right: auto;
+    margin-bottom: auto;
+    margin-left: -38px;
+}
+.menu li 
+{
+    padding: 0px;
+    float:left;
+    margin: 1px
+}
+.menu a
+{
+    background-color:#ccc;
+    padding: 5px;
+}
+.menu a:hover
+{  
+    background-color:#eee;
+    padding: 5px;
+}
+.col-content 
+{
+    width: 59%;
+    max-width: 600px;
+    border: 1px dashed #ccc;
+    float: left;
+    margin-bottom: 5px;
+}
+.columns 
+{
+    float: right;
+    width: 39%;
+    border: 1px dashed #ccc;
+    padding-bottom: 3px;
+}
+.colum1 
+{
+    float:left;
+    width: 49%;
+    border: 1px dotted #CCC;
+}
+.colum2 
+{
+    float: right;
+    width: 49%; 
+    border: 1px dotted #CCC;
+}
+
+@media screen and (max-width: 769px) 
+{
+    .col-content
+    {
+        width: 100%;
+        max-width: 100%;
+        border: 1px dashed #ccc;
+    }
+    .columns 
+    {
+        width: 100%;
+        border: 1px dashed #ccc;
+        padding-bottom: 3px;
+    }
+    .colum1 
+    {
+        float:left;
+        width: 49%;
+        border: 1px dotted #CCC;
+    }
+    .colum2 
+    {
+        float: right;
+        width: 49%; 
+        border: 1px dotted #CCC;
+    }
+}
+
+@media screen and (max-width: 481px) 
+{
+    .menu li 
+    {
+        float:left;
+        width: 96%;
+        padding: 0px;
+    }
+    .menu a
+    {
+        float:left;
+        background-color:#ccc;
+        width: 100%;
+        padding: 5px;
+    }
+    .menu a:hover
+    {  
+        background-color:#eee;
+        width: 100%;
+        padding: 5px;
+    }
+    .colum1 
+    {
+        width: 100%;
+        border: 1px dotted #CCC;
+    }
+    .colum2 
+    {
+        width: 100%;    
+        border: 1px dotted #CCC;
+    }
+}
+
+/*BUTTONS*/
+.ft_button
+{
+    background-color:#ccc;
+}
+.ft_button a:hover, input:hover
+{  
+    background-color:#eee;
+}
+/*BUTTONS*/
+
+/*TABLE Horizontal scroll*/
+table.width200,table.rwd_auto 
+{
+    border:1px solid #ccc;
+    width:100%;
+    margin:0 0 50px 0
+}
+.width200 th, .rwd_auto th 
+{
+    background:#ccc;
+    padding:5px;
+    text-align:center;
+}
+.width200 td, .rwd_auto td 
+{
+    border-bottom:1px solid #ccc;
+    padding:5px;
+    text-align:center
+}
+.width200 tr:last-child td, .rwd_auto tr:last-child td
+{
+    border:0
+}
+.rwd 
+{
+    width:100%;
+    overflow:auto;
+}
+.rwd table .rwd_auto 
+{
+    width:auto;
+    min-width:100%
+}
+.rwd_auto th, .rwd_auto td 
+{
+    white-space: nowrap;
+}
+
+tr.odd.row_selected td 
+{
+    background-color: #9FAFD1;
+}
+
+tr.even.row_selected td 
+{
+    background-color: #B0BED9;
+}
+/*TABLE Horizontal scroll*/
+
+.ft_center
+{
+    text-align: center;
+}

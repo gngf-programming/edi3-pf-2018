@@ -1,0 +1,35 @@
+1-Componentes que son acciones, mediante uri: "action=TestRequestResponse&greeting=Hello"
+
+2-Datos:
+Estructura de datos JSON:
+{"data":[
+    {"firstName":"John", "lastName":"Doe"},
+    {"firstName":"Anna", "lastName":"Smith"},
+    {"firstName":"Peter", "lastName":"Jones"}
+]}
+
+{"data":[
+    {"last_name": "Doe", "first_name": "John"}, 
+    {"last_name": "Smith", "first_name": "Ana"}, 
+    {"email": "peter_jones@gmail.com", "last_name": "Jones", "first_name": "Peter"}
+]}
+
+
+Estructura de datos XML:
+<data>
+    <datum>
+        <firstName>John</firstName> <lastName>Doe</lastName>
+    </datum>
+    <datum>
+        <firstName>Anna</firstName> <lastName>Smith</lastName>
+    </datum>
+    <datum>
+        <firstName>Peter</firstName> <lastName>Jones</lastName>
+    </datum>
+</data>
+
+3-Portable Enviroment Variables
+
+4-javascript ajax RequestWrapper
+
+5-Cambio de estructura de directorios.

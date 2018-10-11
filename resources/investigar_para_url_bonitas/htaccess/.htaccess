@@ -1,0 +1,5 @@
+##Con este par de reglas nos aseguramos de que las solicitudes 
+##al servidor sean de la forma /entidad y /entidad/idnumerico
+RewriteEngine On
+RewriteRule ^([a-zA-Z_-]*)$ index.php?entities=$1
+RewriteRule ^([a-zA-Z_-]*)/([0-9]+) index.php?entities=$1&id=$2 [L,QSA]
