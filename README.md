@@ -24,7 +24,7 @@ Proyecto final EDI 3 2018
     </li>
     <li>QA: Pruebas contras las interfaces, no es necesario frameworks, pero pueden usar assert, etc:
         <ul>
-            <li>Giulano</li>
+            <li>Giuliano</li>
             <li>Boris</li>
             <li>Lucas</li>
             <li>Hernán</li>
