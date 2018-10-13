@@ -24,9 +24,9 @@ Proyecto final EDI 3 2018
     </li>
     <li>QA: Pruebas contras las interfaces, no es necesario frameworks, pero pueden usar assert, etc:
         <ul>
-            <li>Giuliano</li>
+            <li>Giuliano -> XmlDocumentGenerator</li>
             <li>Boris</li>
-            <li>Lucas</li>
+            <li>Lucas -> RequestHandler (formato estándar URI)</li>
             <li>Hernán</li>
         </ul>
     </li>
