@@ -1,0 +1,1 @@
+g++ test.cpp -lsqlite3
