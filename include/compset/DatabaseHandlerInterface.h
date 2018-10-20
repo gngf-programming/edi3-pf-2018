@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 class DatabaseHandler
 {
@@ -17,11 +18,16 @@ class DatabaseHandler
     	virtual ~DatabaseHandler(){}
 		virtual bool getErrorStatus() = 0;
 		virtual bool getResultStatus() = 0;
-		virtual DatabaseHandler setQuery( std::string query ) = 0;
-		virtual DatabaseHandler setStoredProcedure( std::string storedProcedure ) = 0;
-		virtual DatabaseHandler withResultStatus() = 0;
-		virtual DatabaseHandler addParameter( std::string key, std::string value ) = 0;
-		virtual void execute();
+		virtual DatabaseHandler* setQuery( std::string query ) = 0;
+		virtual DatabaseHandler* setStoredProcedure( std::string storedProcedure ) = 0;
+		virtual DatabaseHandler* withResultStatus() = 0;
+		virtual DatabaseHandler* addParameter( std::string key, std::string value ) = 0;
+		virtual std::unordered_map<std::string, std::string> execute() = 0;
+		
+		//virtual json execute();//En un futuro....
+		//json
+		//unordered_map<std::string, std::string> = 0;
+		//virtual void dispose(); //Ver si realmente tiene que ser explícito 
 };
 
 #endif // DATABASE_HANLDER_INTERFACE_H
