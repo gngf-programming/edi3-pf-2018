@@ -10,7 +10,12 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <unordered_map>
+
+
+typedef std::vector< std::unordered_map<std::string, std::string> > DataType; 
+typedef std::unordered_map<std::string, std::string> DatumType; 
 
 class DatabaseHandler
 {
@@ -22,7 +27,8 @@ class DatabaseHandler
 		virtual DatabaseHandler* setStoredProcedure( std::string storedProcedure ) = 0;
 		virtual DatabaseHandler* withResultStatus() = 0;
 		virtual DatabaseHandler* addParameter( std::string key, std::string value ) = 0;
-		virtual std::unordered_map<std::string, std::string> execute() = 0;
+		virtual DataType fetch() = 0;
+		virtual DatumType fetchAll() = 0;
 		
 		//virtual json execute();//En un futuro....
 		//json
