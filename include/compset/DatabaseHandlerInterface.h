@@ -27,6 +27,7 @@ class DatabaseHandler
 		virtual DatabaseHandler* setStoredProcedure( std::string storedProcedure ) = 0;
 		virtual DatabaseHandler* withResultStatus() = 0;
 		virtual DatabaseHandler* addParameter( std::string key, std::string value ) = 0;
+		virtual void execQuery() = 0;
 		virtual DataType fetch() = 0;
 		virtual DatumType fetchAll() = 0;
 		
