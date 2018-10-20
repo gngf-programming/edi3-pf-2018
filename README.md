@@ -17,9 +17,9 @@ Proyecto final EDI 3 2018
             <li>Francisco y Florencia -> Escribir pruebas de uso de json</li>
         </ul>
     </li>
-    <li>Base Datos: implementar las tablas necesarias para Authentication y Authorization. Escribir los procedimientos de alta, baja y modificación de las tablas users, roles, actions:
+    <li>Base Datos: implementar las tablas necesarias para Authentication y Authorization. Escribir los procedimientos de alta, baja y modificación de las tablas users, roles, actions y escribir un componente de incialización de base de datos:
         <ul>
-            <li>Facundo</li>
+            <li>Facundo -> componente de inicialización de base de datos</li>
         </ul>
     </li>
     <li>QA: Pruebas contras las interfaces, no es necesario frameworks, pero pueden usar assert, etc:
