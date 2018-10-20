@@ -30,10 +30,6 @@ class DatabaseHandler
         virtual void execQuery() = 0;
         virtual DataType fetch() = 0;
         virtual DatumType fetchAll() = 0;
-        
-        //virtual json execute();//En un futuro....
-        //json
-        //unordered_map<std::string, std::string> = 0;
         //virtual void dispose(); //Ver si realmente tiene que ser explícito 
 };
 
