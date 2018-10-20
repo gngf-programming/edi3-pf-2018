@@ -17,16 +17,14 @@
 typedef std::vector< std::unordered_map<std::string, std::string> > DataType; 
 typedef std::unordered_map<std::string, std::string> DatumType; 
 
-class DatabaseHandler
+class DatabaseHandlerInterface
 {
     public:
-        virtual ~DatabaseHandler(){}
+        virtual ~DatabaseHandlerInterface(){}
         virtual bool getErrorStatus() = 0;
-        virtual bool getResultStatus() = 0;
-        virtual DatabaseHandler* setQuery( std::string query ) = 0;
-        virtual DatabaseHandler* setStoredProcedure( std::string storedProcedure ) = 0;
-        virtual DatabaseHandler* withResultStatus() = 0;
-        virtual DatabaseHandler* addParameter( std::string key, std::string value ) = 0;
+        virtual DatabaseHandlerInterface* setQuery( std::string query ) = 0;
+        virtual DatabaseHandlerInterface* setStoredProcedure( std::string storedProcedure ) = 0;
+        virtual DatabaseHandlerInterface* addParameter( std::string key, std::string value ) = 0;
         virtual void execQuery() = 0;
         virtual DataType fetch() = 0;
         virtual DatumType fetchAll() = 0;
