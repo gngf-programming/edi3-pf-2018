@@ -2,9 +2,17 @@
 * Copyright (c) 2018 Leonardo Casales - Jonathan Egea. All rights reserved. .0
 **/
 
-#include <libpq-fe.h> // include\vendors\postgreSQL\libpq-fe.h
-#include <DatabaseHandlerInterface.h>
-#include <ComponentInterface.h>
+// #include <libpq-fe.h> // include\vendors\postgreSQL\libpq-fe.h
+#include "/Library/PostgreSQL/11/include/libpq-fe.h"
+//#include "libpq-fe.h"
+
+#include <iostream>
+#include <string>
+
+#include <compset/ComponentFactory.h>
+
+#include <compset/DatabaseHandlerInterface.h>
+#include <compset/ComponentInterface.h>
 
 class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public ComponentInterface {
 
@@ -41,6 +49,7 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
 
         int referenceCounter ;
         bool implemented ;
+        void ReadConfig() ;
 };
 
 // PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler() {
@@ -52,26 +61,16 @@ PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
 
     ReadConfig() ;
 
-    PGconn* cnn = NULL;
-    PGresult* result = NULL;
-    qSQL = '';
+    PGconn* cnn = NULL ;
+    PGresult* result = NULL ;
+    qSQL = "" ;
 
-    Connect() ;
-}
+	cnn = PQsetdbLogin( host ,
+                        port , NULL , NULL ,
+                        dataBase , 
+                        user ,
+                        passwd);
 
-PosgreSQLDatabaseHandler::~PosgreSQLDatabaseHandler() {
-	if (connected ) {
-    	PQclear(result);
-    	PQfinish(cnn);
-	}
-}
-
-DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setQuery( std::string query ) {
-    this.qSQL = query;
-}
-
-bool Connect() {
-	cnn = PQsetdbLogin(host,port,NULL,NULL,dataBase,user,passwd);
     if (PQstatus(cnn) != CONNECTION_BAD) {
         printf( "Estamos conectados a PostgreSQL!<br>\n" ) ; 
         connected = true ;
@@ -81,35 +80,45 @@ bool Connect() {
 		PQfinish(cnn) ;
 		connected = false ;
 	}
-	return connected ;
-
 }
 
-void ReadConfig() {
-	ifstream archivo;
-	string texto[6];
-
-	archivo.open("leer.txt",ios::in);
-
-	if (archivo.fail()){
-		cout<<"no se pudo leer";
+PosgreSQLDatabaseHandler::~PosgreSQLDatabaseHandler() {
+	if ( connected ) {
+    	PQclear(result) ;
+    	PQfinish(cnn) ;
 	}
-	int i=0;
-	while(!archivo.eof()){
+}
 
-		getline(archivo,texto[i]);
-		cout<<texto[i]<<endl;
+DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setQuery( std::string query ) {
+    qSQL = query ;
+}
+
+void PosgreSQLDatabaseHandler::ReadConfig() {
+	std::string data[6];
+	std::ifstream inifile;
+
+	inifile.open( "config.ini", std::ios::in );
+
+	if ( inifile.fail() ){
+		std::cout << "no se pudo leer" ;
+	}
+
+	int i = 0 ;
+	while( !inifile.eof() ) {
+
+		std::getline( inifile , data[i] ) ;
+		std::cout << data[i] << std::endl ;
                 i++;
     }
 
-    this.host = Host ;
-    this.dataBase = DataBase ;
-    this.port = Port ;
-    this.user = User ;
-    this.passwd = Passwd ;
+    // host = data[1] ;
+    // dataBase = data[2] ;
+    // port = data[3] ;
+    // user = data[4] ;
+    // passwd = data[5] ;
 }
 
-void PosgreSQLDatabaseHandler::execQuery( char* table ) {
+void PosgreSQLDatabaseHandler::execQuery() {
 
     int i = 0 ;    
     
@@ -138,13 +147,12 @@ void PosgreSQLDatabaseHandler::execQuery( char* table ) {
                 printf ( "<br>\n" ) ;
             }
         }
-        return true ;
     }
 
 }
 
 bool PosgreSQLDatabaseHandler::getErrorStatus() {
-    return PQstatus(cnn) = CONNECTION_BAD
+    return ( PQstatus(cnn) == CONNECTION_BAD ) ;
 }
 
 /*
@@ -196,5 +204,5 @@ extern "C" ComponentInterface* create();
 
 ComponentInterface* create()
 {
-    return (ComponentInterface*) new PostgreSQLDatabaseHandler();
+    return (ComponentInterface*) new PosgreSQLDatabaseHandler();
 }
