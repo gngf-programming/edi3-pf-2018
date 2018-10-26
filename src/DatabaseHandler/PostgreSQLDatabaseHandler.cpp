@@ -50,13 +50,13 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
 
 PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
 
-    //read file and set params
-    char* Host, char* Port, char* DataBase, char* User, char* Passwd ;
-    host = Host ;
-    dataBase = DataBase ;
-    port = Port ;
-    user = User ;
-    passwd = Passwd ;
+    // read file and set params
+    // char* Host, char* Port, char* DataBase, char* User, char* Passwd ;
+    host = "localhost" ;
+    dataBase = "compset" ;
+    port = "3360" ;
+    user = "root" ;
+    passwd = "root" ;
 
     PGconn* cnn = NULL;
     PGresult* result = NULL;
@@ -121,14 +121,12 @@ void PosgreSQLDatabaseHandler::execQuery( char* table ) {
             }
         }
         return true ;
-        // Ahora nos toca liberar la memoria
-        //PQclear(result);
-        
-    } else {
-        printf( "Error de conexion\n" );
-        return false ;
     }
 
+}
+
+bool PosgreSQLDatabaseHandler::getErrorStatus() {
+    return PQstatus(cnn) = CONNECTION_BAD
 }
 
 /*
