@@ -29,11 +29,11 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         // int Show( char* table ) ;
 
     private:
-        char* host ;
-        char* dataBase ;
-        char* port ;
-        char* user ;
-        char* passwd ;
+        std::string host ;
+        std::string dataBase ;
+        std::string port ;
+        std::string user ;
+        std::string passwd ;
         PGconn *cnn ;
         PGresult *result ;
         bool connected ;
@@ -50,13 +50,7 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
 
 PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
 
-    // read file and set params
-    // char* Host, char* Port, char* DataBase, char* User, char* Passwd ;
-    host = "localhost" ;
-    dataBase = "compset" ;
-    port = "3360" ;
-    user = "root" ;
-    passwd = "root" ;
+    ReadConfig() ;
 
     PGconn* cnn = NULL;
     PGresult* result = NULL;
@@ -89,6 +83,30 @@ bool Connect() {
 	}
 	return connected ;
 
+}
+
+void ReadConfig() {
+	ifstream archivo;
+	string texto[6];
+
+	archivo.open("leer.txt",ios::in);
+
+	if (archivo.fail()){
+		cout<<"no se pudo leer";
+	}
+	int i=0;
+	while(!archivo.eof()){
+
+		getline(archivo,texto[i]);
+		cout<<texto[i]<<endl;
+                i++;
+    }
+
+    this.host = Host ;
+    this.dataBase = DataBase ;
+    this.port = Port ;
+    this.user = User ;
+    this.passwd = Passwd ;
 }
 
 void PosgreSQLDatabaseHandler::execQuery( char* table ) {
