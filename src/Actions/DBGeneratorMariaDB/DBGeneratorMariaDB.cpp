@@ -1,22 +1,12 @@
-/**
-* Copyright (c) 2016 Gabriel Ferreira <gabrielinuz@gmail.com>. All rights reserved. 
-* This file is part of COMPSET.
-* Released under the GPL3 license
-* https://opensource.org/licenses/GPL-3.0
-**/
-
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <winsock.h>
+#include "./include/mysql.h"
 
 #include <compset/ComponentInterface.h>
-#include <compset/ComponentFactory.h>
-#include <compset/RequestHandlerInterface.h>
-#include <compset/ResponseHandlerInterface.h>
 #include <compset/ActionInterface.h>
 
-typedef std::vector< std::unordered_map<std::string, std::string> > DataType; 
-typedef std::unordered_map<std::string, std::string> DatumType; 
 
 class DBGeneratorMariaDB : public ActionInterface, public ComponentInterface
 {
@@ -42,24 +32,46 @@ DBGeneratorMariaDB::~DBGeneratorMariaDB(){}
 
 int DBGeneratorMariaDB::execute()
 {
-    ComponentFactory* componentFactoryObject = new ComponentFactory();
+    MYSQL *myData; 
+  
+    // Intentar iniciar MySQL: 
+    if(!(myData = mysql_init(0)))  
+    { 
+        // Imposible crear el objeto myData 
+        return 1; 
+    } 
 
-    componentFactoryObject->setInterfaceName("RequestHandlerInterface");
-    ComponentInterface* requestHandlerComponent = componentFactoryObject->createFrom("./lib/RequestHandler");
-    RequestHandlerInterface* requestHandlerObject = ( (RequestHandlerInterface*) requestHandlerComponent->getInstance() );
-    DatumType requestParameters = requestHandlerObject->getRequestParameters();
-    DataType data;
-    data.push_back(requestParameters);
-    requestHandlerComponent->release();
+    const char* usuario = ("root"); 
+    const char* clave = ("root"); 
+    const char* database_name = ("compset");
+    if(!mysql_real_connect(myData, "127.0.0.1", usuario, clave, database_name, mysql_port, NULL, 0))  
+    { 
+        // No se puede conectar con el servidor en el puerto especificado. 
+        std::cout << "Imposible conectar con servidor mysql en el puerto " << mysql_port << std::endl; 
+        mysql_close(myData); 
+        return 1; 
+    } 
+     
+    if(mysql_ping(myData))  
+    { 
+        std::cout << "Error: conexión imposible" << std::endl; 
+        mysql_close(myData); 
+    } 
 
-    componentFactoryObject->setInterfaceName("ResponseHandlerInterface");
-    ComponentInterface* responseHandlerComponent = componentFactoryObject->createFrom("./lib/ResponseHandler");
-    ResponseHandlerInterface* responseHandlerObject = ( (ResponseHandlerInterface*) responseHandlerComponent->getInstance() );
-    responseHandlerObject->respond(data);   
-    responseHandlerComponent->release();
+    // Hacer una consulta con el comando "SELECT * FROM users": 
+    if( mysql_query (   myData, 
+                        "SELECT * FROM users" 
+                    ) 
+      )  
+    { 
+        // Error al realizar la consulta: 
+        std::cout << "ERROR: " << mysql_error(myData) << std::endl; 
+        mysql_close(myData); 
+        rewind(stdin); 
+        getchar(); 
+        return 2; 
+    } 
     
-    delete componentFactoryObject;
-
     return 0;
 }
 

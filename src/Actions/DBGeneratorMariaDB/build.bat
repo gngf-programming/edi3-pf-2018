@@ -1,1 +1,1 @@
-g++ -shared -Wall -std=c++11 -I../../../include/ TestRequestResponse.cpp -o TestRequestResponse.dll
+g++ -shared -Wall -std=c++11 -I../../../include/ -I../DBGeneratorMariaDB/include/ DBGeneratorMariaDB.cpp -o DBGeneratorMariaDB.dll
