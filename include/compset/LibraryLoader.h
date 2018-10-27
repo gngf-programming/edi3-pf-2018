@@ -13,7 +13,8 @@
     #define RTLD_NOW    2
     #define RTLD_GLOBAL 4
     #include "dlfcn.h"
-
+#elif __APPLE__
+    #include "dlfcnMac.h"
 #elif defined(_WIN32) || defined(WIN32)
     #include <windows.h>
 #endif // defined
@@ -67,6 +68,9 @@ void* LibraryLoader::loadLibrary(std::string name)
     #ifdef __unix__
         name += ".so";
         library = dlopen(name.c_str(), RTLD_NOW);
+    #elif __APPLE__
+        name += ".dylib";
+        library = dlopen(name.c_str(), RTLD_LOCAL|RTLD_LAZY);
     #elif defined(_WIN32) || defined(WIN32)
         name += ".dll";
         library = (void*) LoadLibrary(name.c_str());
@@ -79,6 +83,8 @@ void* LibraryLoader::getExternalFunction(std::string name)
 {
     #ifdef __unix__
         method = dlsym(library, name.c_str());
+    #elif __APPLE__
+        method = dlsym(library, name.c_str());
     #elif defined(_WIN32) || defined(WIN32)
         method = (void*) GetProcAddress((HINSTANCE)library, name.c_str());
     #endif // defined
@@ -89,6 +95,8 @@ void* LibraryLoader::getExternalFunction(std::string name)
 bool LibraryLoader::freeLibrary()
 {
     #ifdef __unix__
+        freedom = dlclose(library);
+    #elif __APPLE__
         freedom = dlclose(library);
     #elif defined(_WIN32) || defined(WIN32)
         freedom = FreeLibrary((HINSTANCE)library);
