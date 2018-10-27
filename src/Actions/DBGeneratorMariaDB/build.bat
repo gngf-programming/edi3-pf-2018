@@ -1,0 +1,1 @@
+g++ -shared -Wall -std=c++11 -I../../../include/ TestRequestResponse.cpp -o TestRequestResponse.dll
