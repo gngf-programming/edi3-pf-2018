@@ -12,6 +12,7 @@ DataType GenerateTestXMLContent(void);
 bool CheckXMLContent(std::string xmlContent);
 
 bool CheckXMLHeader(std::string xmlContent);
+bool CheckXMLBodyBalancedLabeling(std::string xmlContent);
 
 void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator);
 void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator);
@@ -41,17 +42,7 @@ DataType GenerateTestXMLContent(void)
 
 bool CheckXMLContent(std::string xmlContent)
 {
-	/*
-	Content - type: text / xml; charset = utf - 8
-
-	<?xml version = "1.0" encoding = "UTF-8"?>
-
-	<data>
-		<datum>
-			<last_name>Doe<last_name>
-		</datum>
-	</data>
-	*/
+	bool result = true;
 
 	if (CheckXMLHeader(xmlContent))
 	{
@@ -60,33 +51,20 @@ bool CheckXMLContent(std::string xmlContent)
 	else
 	{
 		std::cout << "XML header bad syntax" << std::endl << std::endl;
+		result = false;
 	}
 
-	try {
-		// Any string that starts with </ then anything with letters, numbers or underscore, and then >
-		const std::regex xmlClosingLabel("\\<(/[a-zA-Z_0-9]*)\\>");
-
-		// Any string that starts with < then anything with letters, numbers or underscore, and then >
-		const std::regex xmlOpeningLabel("\\<([a-zA-Z_0-9]*)\\>");
-
-		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlClosingLabel);
-		std::sregex_iterator end;
-
-		while (next != end) 
-		{
-			std::smatch match = *next;
-
-			//std::cout << match.str() << "\n";
-
-			next++;
-		}
-	}
-	catch (std::regex_error& e) 
+	if (CheckXMLBodyBalancedLabeling(xmlContent))
 	{
-		std::cout << "Syntax error in the regular expression" << std::endl << std::endl;
+		std::cout << "XML body is correct!" << std::endl << std::endl;
+	}
+	else
+	{
+		std::cout << "XML body bad syntax" << std::endl << std::endl;
+		result = false;
 	}
 
-	return false;
+	return result;
 }
 
 bool CheckXMLHeader(std::string xmlContent)
@@ -107,6 +85,51 @@ bool CheckXMLHeader(std::string xmlContent)
 	if (std::regex_match(firstLine, xmlHeaderLabel))
 	{
 		result = true;
+	}
+
+	return result;
+}
+
+bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
+{
+	std::cout << "Checking XML file body" << std::endl << std::endl;
+
+	bool result = false;
+
+	/*
+	Content - type: text / xml; charset = utf - 8
+
+	<?xml version = "1.0" encoding = "UTF-8"?>
+
+	<data>
+		<datum>
+			<last_name>Doe<last_name>
+		</datum>
+	</data>
+	*/
+
+	try {
+		// Any string that starts with </ then anything with letters, numbers or underscore, and then >
+		const std::regex xmlClosingLabel("\\<(/[a-zA-Z_0-9]*)\\>");
+
+		// Any string that starts with < then anything with letters, numbers or underscore, and then >
+		const std::regex xmlOpeningLabel("\\<([a-zA-Z_0-9]*)\\>");
+
+		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlClosingLabel);
+		std::sregex_iterator end;
+
+		while (next != end)
+		{
+			std::smatch match = *next;
+
+			//std::cout << match.str() << "\n";
+
+			next++;
+		}
+	}
+	catch (std::regex_error& e)
+	{
+		std::cout << "Syntax error in the regular expression" << std::endl << std::endl;
 	}
 
 	return result;
