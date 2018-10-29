@@ -9,6 +9,8 @@
 #include "ComponentInterface.h"
 #include "ComponentFactory.h"
 
+#include <assert.h>
+
 /*
 
 This is the creation of a component class to abstract the complexity of the components 
