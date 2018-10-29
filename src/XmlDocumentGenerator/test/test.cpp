@@ -11,6 +11,8 @@ DataType GenerateTestXMLContent(void);
 
 bool CheckXMLContent(std::string xmlContent);
 
+bool CheckXMLHeader(std::string xmlContent);
+
 void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator);
 void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator);
 
@@ -51,24 +53,30 @@ bool CheckXMLContent(std::string xmlContent)
 	</data>
 	*/
 
-	try {
-		// Any string that starts with <? then anything less than ?> and then ?>
-		const std::regex xmlHeaderLabel("\\<\\?([^\\?|^\\>]*)\\?\\>");
+	if (CheckXMLHeader(xmlContent))
+	{
+		std::cout << "XML header is correct!" << std::endl << std::endl;
+	}
+	else
+	{
+		std::cout << "XML header bad syntax" << std::endl << std::endl;
+	}
 
+	try {
 		// Any string that starts with </ then anything with letters, numbers or underscore, and then >
 		const std::regex xmlClosingLabel("\\<(/[a-zA-Z_0-9]*)\\>");
 
 		// Any string that starts with < then anything with letters, numbers or underscore, and then >
 		const std::regex xmlOpeningLabel("\\<([a-zA-Z_0-9]*)\\>");
 
-		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlHeaderLabel);
+		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlClosingLabel);
 		std::sregex_iterator end;
 
 		while (next != end) 
 		{
 			std::smatch match = *next;
 
-			std::cout << match.str() << "\n";
+			//std::cout << match.str() << "\n";
 
 			next++;
 		}
@@ -81,6 +89,28 @@ bool CheckXMLContent(std::string xmlContent)
 	return false;
 }
 
+bool CheckXMLHeader(std::string xmlContent)
+{
+	std::cout << "Checking XML file header" << std::endl << std::endl;
+
+	bool result = false;
+
+	// Any string that starts with <? then anything less than ?> and then ?>
+	const std::regex xmlHeaderLabel("\\<\\?([^\\?|^\\>]*)\\?\\>");
+
+	// Get first line of xml document (until first "\n")
+	std::size_t position = xmlContent.find("\n");
+	std::string firstLine = xmlContent.substr(0, position);
+
+	std::cout << "Current header is: \"" << firstLine << "\"" << std::endl << std::endl;
+
+	if (std::regex_match(firstLine, xmlHeaderLabel))
+	{
+		result = true;
+	}
+
+	return result;
+}
 
 void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator)
 {
