@@ -13,6 +13,7 @@ bool CheckXMLContent(std::string xmlContent);
 
 bool CheckXMLHeader(std::string xmlContent);
 bool CheckXMLBodyBalancedLabeling(std::string xmlContent);
+bool EquivalentLabels(std::string openingLabel, std::string closingLabel);
 
 void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator);
 void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator);
@@ -94,19 +95,9 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 {
 	std::cout << "Checking XML file body" << std::endl << std::endl;
 
-	bool result = false;
+	bool result = true;
 
-	/*
-	Content - type: text / xml; charset = utf - 8
-
-	<?xml version = "1.0" encoding = "UTF-8"?>
-
-	<data>
-		<datum>
-			<last_name>Doe<last_name>
-		</datum>
-	</data>
-	*/
+	std::cout << xmlContent.c_str() << std::endl << std::endl;
 
 	try {
 		// Any string that starts with </ then anything with letters, numbers or underscore, and then >
@@ -115,21 +106,84 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 		// Any string that starts with < then anything with letters, numbers or underscore, and then >
 		const std::regex xmlOpeningLabel("\\<([a-zA-Z_0-9]*)\\>");
 
-		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlClosingLabel);
+		// Combination of both opening and closing label's regular expressions
+		const std::regex xmlOpeningAndClosingLabels("\\<(/[a-zA-Z_0-9]*)\\>|\\<([a-zA-Z_0-9]*)\\>");
+
+		// Filter entire content to obtain only xml labels
+		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlOpeningAndClosingLabels);
 		std::sregex_iterator end;
 
+		std::vector<std::string> openingLabels;
+		std::vector<std::string> closingLabels;
+
+		// While content is available
 		while (next != end)
 		{
 			std::smatch match = *next;
 
-			//std::cout << match.str() << "\n";
+			//std::cout << match.str() << std::endl << std::endl;
+
+			// Filter only closing labels
+			if (std::regex_match(match.str(), xmlOpeningLabel))
+			{
+				openingLabels.push_back(match.str());
+			
+			} // Else filter only opening labels
+			else if (std::regex_match(match.str(), xmlClosingLabel))
+			{
+				closingLabels.push_back(match.str());
+			}
 
 			next++;
 		}
+
+		// Revert one vector, 'cause labels are stored in an inverted order due the nature of xml files
+		std::reverse(closingLabels.begin(), closingLabels.end());
+
+		// Compare the size of the vectors first. There must be the same number of opening and closing labels.
+		if (openingLabels.size() == closingLabels.size())
+		{
+			// After that, compare label by label as long as result equals true
+			for (int index = 0; index < openingLabels.size(); index++)
+			{
+				if (EquivalentLabels(openingLabels[index], closingLabels[index]) == false)
+				{
+					result = false;
+					break; // !!
+				}
+			}
+		}
+		else
+		{
+			std::cout << "The opening-labels amount differs from the closing-labels amount" << std::endl << std::endl;
+			result = false;
+		}
+
 	}
 	catch (std::regex_error& e)
 	{
 		std::cout << "Syntax error in the regular expression" << std::endl << std::endl;
+	}
+
+	return result;
+}
+
+bool EquivalentLabels(std::string openingLabel, std::string closingLabel)
+{
+	bool result = true;
+
+	std::string newClosingLabel = closingLabel;
+
+	// Remove closingLabel[1] char "/" to generate an equivalent opening label 
+	// i. e. <data></data> ---> <data><data>
+	newClosingLabel.erase(1, 1);
+
+	// Then compare both labels
+	result = openingLabel == newClosingLabel;
+
+	if (result == false)
+	{
+		std::cout << "Bad syntax with labels " << openingLabel.c_str() << " and " << closingLabel.c_str() << std::endl << std::endl;
 	}
 
 	return result;
