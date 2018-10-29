@@ -15,6 +15,8 @@
 #include <compset/ResponseHandlerInterface.h>
 #include <compset/ActionInterface.h>
 
+#include <libpq++.h>
+
 typedef std::vector< std::unordered_map<std::string, std::string> > DataType; 
 typedef std::unordered_map<std::string, std::string> DatumType; 
 
