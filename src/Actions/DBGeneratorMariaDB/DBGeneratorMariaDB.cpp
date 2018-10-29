@@ -1,11 +1,14 @@
 #include <iostream>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <fstream>
 #include <unordered_map>
 #include <winsock.h>
-
+#include <windows.h>
 #include <mysql.h>
+//#include <my_global.h>
 
 #include <ComponentInterface.h>
 #include <ActionInterface.h>
@@ -33,9 +36,9 @@ class DBGeneratorMariaDB : public ActionInterface, public ComponentInterface
             MY_PORT_NO = 3306,
             MY_OPT     = 0
         };
-        MYSQL     *conn;
-        MYSQL_RES *res;
-        MYSQL_ROW row;
+       // MYSQL     *conn;
+       // MYSQL_RES *res;
+       // MYSQL_ROW row;
         //ComponentInterface
         int referenceCounter;
         bool implemented;
@@ -53,75 +56,85 @@ DBGeneratorMariaDB::~DBGeneratorMariaDB(){}
 
 int DBGeneratorMariaDB::execute()
 {
-    MYSQL *mariadb = NULL; 
-    
-    mariadb = mysql_init(mariadb);
+    MYSQL *mariadb = NULL;
 
-    // Intentar iniciar MySQL: 
-    if (!mariadb) 
-    {
-        std::cout << "Init faild, out of memory?" << std::endl;
-        return EXIT_FAILURE;
-    }
+    try {
+            mariadb = mysql_init(mariadb);
 
-    if( !mysql_real_connect(
-                            mariadb, 
-                            MY_HOSTNAME, 
-                            MY_USERNAME, 
-                            MY_PASSWORD, 
-                            MY_DATABASE, 
-                            MY_PORT_NO, 
-                            MY_SOCKET,
-                            MY_OPT
-                            )
-      )  
-    { 
-        // No se puede conectar con el servidor en el puerto especificado. 
-        std::cout << "Imposible to connect to the database." << std::endl; 
-        std::cout << "Error: " << mysql_error(mariadb) << std::endl;
-        std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl; 
-        mysql_close(mariadb); 
-        return EXIT_FAILURE; 
-    } else
-    {
-        std::cout << "Successful established connection" << std::endl; 
-    }
-
-    fstream query("querys.sql", ios::in);
-    srting commands;
-    if ( query.is_open() )
-    {
-        //realizar consultas
-        do
-        {
-            getline(query, commands);
-            if( mysql_query ( mariadb, commands ) )  
-            {        
-                // Error al realizar la consulta: 
-                std::cout << "Error: " << mysql_error(mariadb) << std::endl;
-                std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl; 
-                mysql_close(mariadb); 
-                rewind(stdin);      
+            // Intentar iniciar MySQL:
+            if (!mariadb)
+            {
+                std::cout << "Init faild, out of memory?" << std::endl;
+                return EXIT_FAILURE;
             }
-        }while( !query.eof() );
-        query.close();
-        return EXIT_SUCCESS;
-    }else
-    {
-        query.close();
-        std::cout << "Imposible read sql file. Check its existence in the right directory "<<std::endl;
-        return EXIT_FAILURE;
-    }
 
-    // Hacer una consulta": 
-     
-    
-    std::cout << "Error: " << mysql_error(mariadb) << std::endl;
-    std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl;
-    
-    mysql_close(mariadb);
-     
-    getchar();    
+            if( !mysql_real_connect(
+                                    mariadb,
+                                    MY_HOSTNAME,
+                                    MY_USERNAME,
+                                    MY_PASSWORD,
+                                    MY_DATABASE,
+                                    MY_PORT_NO,
+                                    MY_SOCKET,
+                                    MY_OPT
+                                    )
+            )
+            {
+                // No se puede conectar con el servidor en el puerto especificado.
+                std::cout << "Imposible to connect to the database." << std::endl;
+                std::cout << "Error: " << mysql_error(mariadb) << std::endl;
+                std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl;
+                mysql_close(mariadb);
+                return EXIT_FAILURE;
+            } else
+            {
+                std::cout << "Successful established connection" << std::endl;
+            }
+
+            std::fstream query("querys.sql", std::ios::in);
+
+            std::string line;
+            const char* commands;
+
+            if ( query.is_open() )
+            {
+                //realizar consultas
+                do
+                {
+                    getline(query, line );
+                    commands = line.c_str();
+                    if( mysql_query ( mariadb, commands ) )
+                    {
+                        // Error al realizar la consulta:
+                        std::cout << "Error: " << mysql_error(mariadb) << std::endl;
+                        std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl;
+                        mysql_close(mariadb);
+                        rewind(stdin);
+                    }
+                }while( !query.eof() );
+                query.close();
+                return EXIT_SUCCESS;
+            }
+            else
+            {
+                query.close();
+                std::cout << "Imposible read sql file. Check its existence in the right directory "<<std::endl;
+                return EXIT_FAILURE;
+            }
+
+            // Hacer una consulta":
+            std::cout << "Error: " << mysql_error(mariadb) << std::endl;
+            std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl;
+
+            mysql_close(mariadb);
+        } 
+        catch (char *e) 
+        {
+            std::cerr << "[EXCEPTION] " << e << std::endl;
+            return false;
+        }
+
+    getchar();
     return EXIT_FAILURE;
 }
 
@@ -150,3 +163,4 @@ extern "C" ComponentInterface* create()
 {
     return (ComponentInterface*) new DBGeneratorMariaDB;
 }
+
