@@ -1,49 +1,6 @@
-#include <iostream>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "DBGeneratorMariaDB.h"
 
-#include <fstream>
-#include <unordered_map>
-#include <winsock.h>
-#include <windows.h>
-#include <mysql.h>
-//#include <my_global.h>
-
-#include <ComponentInterface.h>
-#include <ActionInterface.h>
-
-
-class DBGeneratorMariaDB : public ActionInterface, public ComponentInterface
-{
-    public:
-        DBGeneratorMariaDB();
-        virtual ~DBGeneratorMariaDB();
-        int execute();
-
-        //ComponentInterface
-        bool implements(std::string interfaceName);
-        void* getInstance();
-        void release();
-
-    private:
-        const char* MY_HOSTNAME;
-        const char* MY_DATABASE;
-        const char* MY_USERNAME;
-        const char* MY_PASSWORD;
-        const char* MY_SOCKET;
-        enum {
-            MY_PORT_NO = 3306,
-            MY_OPT     = 0
-        };
-       // MYSQL     *conn;
-       // MYSQL_RES *res;
-       // MYSQL_ROW row;
-        //ComponentInterface
-        int referenceCounter;
-        bool implemented;
-};
-
+// a sample exported function
 DBGeneratorMariaDB::DBGeneratorMariaDB() : referenceCounter(0){
     MY_HOSTNAME = "localhost";
     MY_DATABASE = "compset";
@@ -127,8 +84,8 @@ int DBGeneratorMariaDB::execute()
             std::cout << "Error Nro: " << mysql_errno(mariadb) << std::endl;
 
             mysql_close(mariadb);
-        } 
-        catch (char *e) 
+        }
+        catch (char *e)
         {
             std::cerr << "[EXCEPTION] " << e << std::endl;
             return false;
@@ -163,4 +120,3 @@ extern "C" ComponentInterface* create()
 {
     return (ComponentInterface*) new DBGeneratorMariaDB;
 }
-

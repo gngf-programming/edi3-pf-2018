@@ -1,5 +1,5 @@
 #include <iostream>
-#include <DBGeneratorMariaDB.cpp>
+#include <DBGeneratorMariaDB.h>
 
 using namespace std;
 
