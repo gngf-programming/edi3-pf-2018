@@ -1,4 +1,4 @@
-#include <iostream>
+
 #include <DBGeneratorMariaDB.h>
 
 using namespace std;

@@ -3,6 +3,10 @@
         "name": "Win32",
         "includePath": [
             "${workspaceFolder}/**",
+            "${workspaceFolder}/include/compset",
+            "C:/MinGW/include",
+            "C:/MinGW/lib",
+            "C:/MinGW/bin/g++.exe",
             "C:/Program Files/MariaDB/MariaDB Connector C 64-bit/lib",
             "C:/Program Files/MariaDB/MariaDB Connector C 64-bit/include",
             "C:/Program Files/MariaDB/MariaDB Connector C 64-bit"
@@ -15,7 +19,7 @@
         "windowsSdkVersion": "10.0.17134.0",
         "compilerPath": "C:/MinGW/bin/g++.exe",
         "cStandard": "c11",
-        "cppStandard": "c++17",
+        "cppStandard": "c++11",
         "intelliSenseMode": "gcc-x64"
     }],
     "version": 4

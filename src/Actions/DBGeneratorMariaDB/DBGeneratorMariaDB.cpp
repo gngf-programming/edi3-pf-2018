@@ -1,4 +1,5 @@
-#include "DBGeneratorMariaDB.h"
+#include <DBGeneratorMariaDB.h>
+
 
 // a sample exported function
 DBGeneratorMariaDB::DBGeneratorMariaDB() : referenceCounter(0){
@@ -60,6 +61,7 @@ int DBGeneratorMariaDB::execute()
                 {
                     getline(query, line );
                     commands = line.c_str();
+                    std::cout << "query generated" << std::endl;
                     if( mysql_query ( mariadb, commands ) )
                     {
                         // Error al realizar la consulta:
@@ -68,7 +70,12 @@ int DBGeneratorMariaDB::execute()
                         mysql_close(mariadb);
                         rewind(stdin);
                     }
+                    else
+                    {
+                        std::cout << "query successfully executed" << std::endl;
+                    }
                 }while( !query.eof() );
+                std::cout << "Query processed Successfully" << std::endl;
                 query.close();
                 return EXIT_SUCCESS;
             }
@@ -116,7 +123,8 @@ void DBGeneratorMariaDB::release()
     if(referenceCounter <= 0) delete this;
 }
 
-extern "C" ComponentInterface* create()
+extern "C" ComponentInterface* create();
+ComponentInterface* create()
 {
     return (ComponentInterface*) new DBGeneratorMariaDB;
 }

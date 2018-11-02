@@ -1,3 +1,2 @@
-g++ -c -Wall -std=c++11 -shared -o DBGeneratorMariaDB.o DBGeneratorMariaDB.cpp -I. -I-./include -I../../../include/compset -L./lib -llibmariadb -lmariadbclient
-g++ -c -Wall -std=c++11 -o test.o test.cpp -I. -I./include -I../../../include/compset -L./lib -llibmariadb -lmariadbclient
-g++ -Wall -std=c++11 -o dbgenerator test.o DBGeneratorMariaDB.o -I. -I./include -I../../../include/compset -I./include/mysql -L./lib -llibmariadb -lmariadbclient
+g++ -shared -Wall -std=c++11 DBGeneratorMariaDB.cpp -o DBGeneratorMariaDB.dll -I./include -I../../../include/compset vendors\libmysql.dll
+g++ -Wall -std=c++11 test.cpp include\DBGeneratorMariaDB.h -o test.exe -I./include -I../../../include/compset vendors\libmysql.dll lib\DBGeneratorMariaDB.dll

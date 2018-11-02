@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
-#include <include/mysql.h>
+#include <mysql.h>
 #include <ComponentInterface.h>
 #include <ActionInterface.h>
 
@@ -56,6 +56,8 @@ class DBGeneratorMariaDB : public ActionInterface, public ComponentInterface
         int referenceCounter;
         bool implemented;
 };
+
+
 
 #ifdef __cplusplus
 }
