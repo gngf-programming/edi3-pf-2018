@@ -1,0 +1,1 @@
+g++ -Wall -std=c++11  -o mdb_test mdb.cpp -I"C:\Program Files (x86)\MariaDB\MariaDB Connector C\include" -lmariadbclient     -L"C:\Program Files (x86)\MariaDB\MariaDB Connector C\lib"  
