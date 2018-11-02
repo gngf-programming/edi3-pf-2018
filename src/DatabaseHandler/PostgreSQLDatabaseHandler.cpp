@@ -25,8 +25,8 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         virtual DatabaseHandlerInterface* setStoredProcedure( std::string storedProcedure ) ;
         virtual DatabaseHandlerInterface* addParameter( std::string key, std::string value ) ;
         virtual void execQuery() ;
-        virtual DataType fetch() ;
-        virtual DatumType fetchAll() ;
+        virtual DatumType fetch() ;
+        virtual DataType fetchAll() ;
 
         //ComponentInterface:
         bool implements(std::string interfaceName);
@@ -175,8 +175,8 @@ DatabaseHandlerInterface* PosgreSQLDatabaseHandler::addParameter( std::string ke
     return result ;
 }
 
-DataType PosgreSQLDatabaseHandler::fetch() {
-    DataType result ;
+DatumType PosgreSQLDatabaseHandler::fetch() {
+    DatumType result ;
     return result ;
 }
 

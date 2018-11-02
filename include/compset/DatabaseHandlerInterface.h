@@ -13,9 +13,8 @@
 #include <vector>
 #include <unordered_map>
 
-
-typedef std::vector< std::unordered_map<std::string, std::string> > DataType; 
-typedef std::unordered_map<std::string, std::string> DatumType; 
+typedef std::unordered_map< std::string, std::string > DatumType; 
+typedef std::vector< DatumType > DataType; 
 
 class DatabaseHandlerInterface
 {
@@ -26,8 +25,8 @@ class DatabaseHandlerInterface
         virtual DatabaseHandlerInterface* setStoredProcedure( std::string storedProcedure ) = 0;
         virtual DatabaseHandlerInterface* addParameter( std::string key, std::string value ) = 0;
         virtual void execQuery() = 0;
-        virtual DataType fetch() = 0;
-        virtual DatumType fetchAll() = 0;
+        virtual DatumType fetch() = 0;
+        virtual DataType fetchAll() = 0;
         //virtual void dispose(); //Ver si realmente tiene que ser explícito 
 };
 
