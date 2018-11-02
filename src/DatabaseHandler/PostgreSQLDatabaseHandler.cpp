@@ -38,11 +38,11 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         // int Show( char* table ) ;
 
     private:
-        std::string host ;
-        std::string dataBase ;
-        std::string port ;
-        std::string user ;
-        std::string passwd ;
+        const char* host ;
+        const char* dataBase ;
+        const char* port ;
+        const char* user ;
+        const char* passwd ;
         PGconn* cnn ;
         PGresult* result ;
         bool connected ;
@@ -71,7 +71,7 @@ PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
     //                     dataBase , 
     //                     user ,
     //                     passwd);
-	cnn = PQsetdbLogin( "localhost" ,
+	cnn = PQsetdbLogin( host ,
                         "3660" , NULL , NULL ,
                         "compset" , 
                         "root" ,
@@ -117,11 +117,11 @@ void PosgreSQLDatabaseHandler::ReadConfig() {
                 i++;
     }
 
-    // host = data[1] ;
-    // dataBase = data[2] ;
-    // port = data[3] ;
-    // user = data[4] ;
-    // passwd = data[5] ;
+    host = data[1].c_str() ;
+    dataBase = data[2].c_str() ;
+    port = data[3].c_str() ;
+    user = data[4].c_str() ;
+    passwd = data[5].c_str() ;
 }
 
 void PosgreSQLDatabaseHandler::execQuery() {
@@ -130,7 +130,7 @@ void PosgreSQLDatabaseHandler::execQuery() {
     
     if (connected ) {
         
-        result = PQexec(cnn, "test" ) ; //qSQL);
+        result = PQexec(cnn, qSQL.c_str()) ;
         
         if (result != NULL) {
             int tuplas = PQntuples(result);
@@ -163,6 +163,7 @@ bool PosgreSQLDatabaseHandler::getErrorStatus() {
 
 
 DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setQuery( std::string query ) {
+
     DatabaseHandlerInterface* result = new PosgreSQLDatabaseHandler() ;
     return result ;
 }
@@ -180,8 +181,8 @@ DatumType PosgreSQLDatabaseHandler::fetch() {
     return result ;
 }
 
-DatumType PosgreSQLDatabaseHandler::fetchAll() {
-    DatumType result ;
+DataType PosgreSQLDatabaseHandler::fetchAll() {
+    DataType result ;
     return result ;
 }
 
