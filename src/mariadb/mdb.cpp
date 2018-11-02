@@ -1,11 +1,7 @@
+#include <stdio.h>  
 #include <iostream>
 #include <windows.h>
-
-
 #include "C:\Program Files (x86)\MariaDB\MariaDB Connector C\include\mysql.h"
-
-#include <stdio.h>  
-
 
 
  
