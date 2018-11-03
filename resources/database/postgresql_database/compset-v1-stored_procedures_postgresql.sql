@@ -2,12 +2,10 @@
 -- ----------------------------------------
 -- Stored Procedures for PostgreSQL database
 -- ----------------------------------------
--- Author: Campos, Facundo N.
-
--- Proyect's Name: compset
--- Database Target Name: compset
-
--- Year of release: 2018
+-- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved.  
+-- This file is part of COMPSET. 
+-- Released under the GPL3 license 
+-- https://opensource.org/licenses/GPL-3.0 
 -- ----------------------------------------
 -- ----------------------------------------
 
