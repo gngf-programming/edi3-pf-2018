@@ -131,48 +131,42 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 
 	bool result = true;
 
-	try {
-		// All xml regular expressions encapsulation to better handling
-		XmlRegex xmlRegex;
+	// All xml regular expressions encapsulation to better handling
+	XmlRegex xmlRegex;
 
-		// All content regex to loop over every row in the file
-		const std::regex allContent("(.*)");
+	// All content regex to loop over every row in the file
+	const std::regex allContent("(.*)");
 
-		// Get an ordered list with all XML body's data structure
-		std::vector<std::string> xmlExpressions;
+	// Get an ordered list with all XML body's data structure
+	std::vector<std::string> xmlExpressions;
 
-		// Go over all file content to obtain only file rows
-		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), allContent);
-		std::sregex_iterator end;
+	// Go over all file content to obtain only file rows
+	std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), allContent);
+	std::sregex_iterator end;
 
-		// While content is available
-		while (next != end)
-		{
-			std::smatch match = *next;
-			std::string currentContent = match.str();
-
-			// First: check for ONLY opening label ('cause xml structure could be nested)
-			CheckAndPush(currentContent, *xmlRegex.openingLabel, xmlExpressions);
-
-			// Second: check for ONLY xml row (if so, then parse xml row with default parameter <bad code disclaimer>)
-			CheckAndPush(currentContent, *xmlRegex.dataRow, xmlExpressions, true);
-
-			// Third check for closing label
-			CheckAndPush(currentContent, *xmlRegex.closingLabel, xmlExpressions);
-
-			next++;
-		}
-
-		// Once that is done, check the resultant container
-
-		for (int index = 0; index < xmlExpressions.size(); index++)
-		{
-			std::cout << xmlExpressions[index] << std::endl;
-		}
-	}
-	catch (std::regex_error& e)
+	// While content is available
+	while (next != end)
 	{
-		std::cout << "Syntax error in the regular expression" << std::endl << std::endl;
+		std::smatch match = *next;
+		std::string currentContent = match.str();
+
+		// First: check for ONLY opening label ('cause xml structure could be nested)
+		CheckAndPush(currentContent, *xmlRegex.openingLabel, xmlExpressions);
+
+		// Second: check for ONLY xml row (if so, then parse xml row with default parameter <bad code disclaimer>)
+		CheckAndPush(currentContent, *xmlRegex.dataRow, xmlExpressions, true);
+
+		// Third check for closing label
+		CheckAndPush(currentContent, *xmlRegex.closingLabel, xmlExpressions);
+
+		next++;
+	}
+
+	// Once that is done, check the resultant container
+
+	for (int index = 0; index < xmlExpressions.size(); index++)
+	{
+		std::cout << xmlExpressions[index] << std::endl;
 	}
 
 	return result;
@@ -221,27 +215,34 @@ void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator)
 	std::cout << "<-------------> End of content <------------->" << std::endl << std::endl << std::endl << std::endl;
 }
 
-void CheckAndPush(std::string content, const std::regex regex, std::vector<std::string>& container, bool isRow = false)
+void CheckAndPush(std::string content, const std::regex regex, std::vector<std::string>& container, bool isRow)
 {
-	std::sregex_iterator subNext(content.begin(), content.end(), regex);
-	std::sregex_iterator subEnd;
-
-	while (subNext != subEnd)
+	try
 	{
-		std::smatch subMatch = *subNext;
+		std::sregex_iterator subNext(content.begin(), content.end(), regex);
+		std::sregex_iterator subEnd;
 
-		if (!subMatch.empty())
+		while (subNext != subEnd)
 		{
-			if (isRow)
-			{
-				container.push_back(subMatch[3].str());
-			}
-			else
-			{
-				container.push_back(subMatch.str());
-			}
-		}		
+			std::smatch subMatch = *subNext;
 
-		subNext++;
+			if (!subMatch.empty())
+			{
+				if (isRow)
+				{
+					container.push_back(subMatch[3].str());
+				}
+				else
+				{
+					container.push_back(subMatch.str());
+				}
+			}
+
+			subNext++;
+		}
+	}
+	catch (const std::regex_error& error)
+	{
+		std::cout << "Syntax error in the regular expression" << std::endl << std::endl;
 	}
 }
