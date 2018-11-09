@@ -1,5 +1,5 @@
 /********************************************************************************
-* Copyright (c) 2016 Nano Nobile <crlsdnlnobile@gmail.com>. All rights reserved. 
+* Copyright (c) 2018 Nano Nobile <crlsdnlnobile@gmail.com>. All rights reserved. 
 * This file is part of COMPSET.
 * Released under the GPL3 license
 * https://opensource.org/licenses/GPL-3.0
@@ -40,7 +40,7 @@ class MdbDatabaseHandler : public DatabaseHandlerInterfaz , public ComponentInte
         bool connected;
 
         MYSQL* conn;
-        string data[5];
+        std::string data[5];
         const char* port;
         const char* user;
         const char* pass;

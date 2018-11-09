@@ -1,1 +1,1 @@
-g++ -Wall -std=c++11  -m32 libmariadb.dll mdb.cpp -o mdb-app.exe
+g++  -Wall -std=c++11  -m32  libmariadb.dll mdb.cpp -o mdb-app.exe

@@ -1,5 +1,5 @@
 /*********************************************************************************
-* Copyright (c) 2016 Nano Nobile <crlsdnlnobile@gmail.com>. All rights reserved. 
+* Copyright (c) 2018 Nano Nobile <crlsdnlnobile@gmail.com>. All rights reserved. 
 * This file is part of COMPSET.
 * Released under the GPL3 license
 * https://opensource.org/licenses/GPL-3.0
@@ -25,7 +25,8 @@ MdbDatabaseHandler::MdbDatabaseHandler() {
         conn = mysql_init (NULL);
         mysql_real_connect( conn, host, user,
                                 pass, database, 3306, NULL, 0 );
-        connected = true ;       
+        if(!getErrorStatus()){ connected = false; }
+        else { connected = true; }       
 };
 
 MdbDatabaseHandler::~MdbDatabaseHandler() {
@@ -39,27 +40,46 @@ bool MdbDatabaseHandler::getErrorStatus() {
 };
 
 DatabaseHandlerInterface* MdbDatabaseHandler::setQuery(std::string query){
+    
+    DatabaseHandlerInterface* rquery;
+    rquery = (DatabaseHandlerInterface*) query;
+    return rquery ;
 
 };
 
 DatabaseHandlerInterface* MdbDatabaseHandler::setStoredProcedure(std::string storedProcedure){
+   
+    DatabaseHandlerInterface* r = NULL ;
+    return r ;
 
 };
 
 DatabaseHandlerInterface* MdbDatabaseHandler::addParameter(std::string key, std::string value){
+        DatabaseHandlerInterface* r = NULL ;
+        return r ;
 
 };
 
-void MdbDatabaseHandler::execQuery(){
+void MdbDatabaseHandler::execQuery() {
+    
+    unsigned int result = 0;
+    char* query = (char*)setQuery(q);
+    result = mysql_query(conn,query);
 
+    return (result == 0) ? NULL : printf("No se ha podido realiar la consulta.. \n") ; // try ...
+    
 };
 
 DatumType MdbDatabaseHandler::fetch(){
+    
+    DatumType result = 0;
+    return result ;
 
 };
 
 DataType MdbDatabaseHandler::fetchAll(){
-
+    DataType result = 0 ;
+    return result ;
 };
 
 bool MdbDatabaseHandler::implements(std::string interfaceName) {
