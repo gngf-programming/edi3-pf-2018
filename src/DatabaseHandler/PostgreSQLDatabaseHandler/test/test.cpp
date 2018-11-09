@@ -18,7 +18,7 @@ int main()
 {
     ComponentFactory* componentFactoryObject = new ComponentFactory();
     componentFactoryObject->setInterfaceName("DatabaseHandlerInterface");
-    ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../PostgreSQLDatabaseHandler");
+    ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../DatabaseHandler");
     DatabaseHandlerInterface* databaseHandlerObject = ( (DatabaseHandlerInterface*) databaseHandlerComponent->getInstance() );
     DataType allData = databaseHandlerObject->fetchAll();
     delete componentFactoryObject;
