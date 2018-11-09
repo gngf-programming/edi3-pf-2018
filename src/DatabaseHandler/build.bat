@@ -1,0 +1,1 @@
+g++ -shared -Wall -std=c++11 -I../../include/ -IC:/"Program Files"/PostgreSQL/11/include -LC:/"Program Files"/PostgreSQL/11/bin PostgreSQLDatabaseHandler.cpp -lpq -o PostgreSQLDatabaseHandler.dll
