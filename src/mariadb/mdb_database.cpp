@@ -25,8 +25,8 @@ MdbDatabaseHandler::MdbDatabaseHandler() {
         conn = mysql_init (NULL);
         mysql_real_connect( conn, host, user,
                                 pass, database, 3306, NULL, 0 );
-        if(!getErrorStatus()){ connected = false; }
-        else { connected = true; }       
+        if(!getErrorStatus()){ connected = true; }
+        else { connected = false; }       
 };
 
 MdbDatabaseHandler::~MdbDatabaseHandler() {
