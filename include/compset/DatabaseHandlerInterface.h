@@ -13,21 +13,20 @@
 #include <vector>
 #include <unordered_map>
 
-typedef std::unordered_map< std::string, std::string > DatumType; 
-typedef std::vector< DatumType > DataType; 
+typedef std::unordered_map< std::string, std::string > Row; 
+typedef std::vector< Row > Table; 
 
 class DatabaseHandlerInterface
 {
     public:
         virtual ~DatabaseHandlerInterface(){}
         virtual bool getErrorStatus() = 0;
-        virtual DatabaseHandlerInterface* setQuery( std::string query ) = 0;
-        virtual DatabaseHandlerInterface* setStoredProcedure( std::string storedProcedure ) = 0;
-        virtual DatabaseHandlerInterface* addParameter( std::string key, std::string value ) = 0;
-        virtual void execQuery() = 0;
-        virtual DatumType fetch() = 0;
-        virtual DataType fetchAll() = 0;
-        //virtual void dispose(); //Ver si realmente tiene que ser explícito 
+        virtual void prepareQuery( std::string query ) = 0;
+        // virtual void addParameter( std::string key, std::string value ) = 0;
+        virtual void addParameter( int key, std::string value ) = 0;
+        virtual void execute() = 0;
+        virtual Row fetch() = 0;
+        virtual Table fetchAll() = 0;
 };
 
 #endif // DATABASE_HANLDER_INTERFACE_H
