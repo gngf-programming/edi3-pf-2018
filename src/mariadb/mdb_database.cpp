@@ -41,9 +41,8 @@ bool MdbDatabaseHandler::getErrorStatus() {
 
 DatabaseHandlerInterface* MdbDatabaseHandler::setQuery(std::string query){
     
-    DatabaseHandlerInterface* rquery;
-    rquery = (DatabaseHandlerInterface*) query;
-    return rquery ;
+    setQuery = query ;
+    return *this ;
 
 };
 
@@ -63,8 +62,7 @@ DatabaseHandlerInterface* MdbDatabaseHandler::addParameter(std::string key, std:
 void MdbDatabaseHandler::execQuery() {
     
     unsigned int result = 0;
-    char* query = (char*)setQuery(q);
-    result = mysql_query(conn,query);
+    result = mysql_query(conn,setQuery);
 
     return (result == 0) ? NULL : printf("No se ha podido realiar la consulta.. \n") ; // try ...
     

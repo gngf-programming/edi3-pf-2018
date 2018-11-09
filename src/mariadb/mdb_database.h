@@ -41,6 +41,7 @@ class MdbDatabaseHandler : public DatabaseHandlerInterfaz , public ComponentInte
 
         MYSQL* conn;
         std::string data[5];
+        const char* setQuery;
         const char* port;
         const char* user;
         const char* pass;
