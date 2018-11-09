@@ -88,7 +88,7 @@ bool MdbDatabaseHandler::implements(std::string interfaceName) {
             : implemented = false;
 }
 
-void* TestRequestResponse::getInstance() {
+void* MdbDatabaseHandler::getInstance() {
     if(implemented) {  referenceCounter++;  return this; }
     return NULL;
 }
