@@ -1,11 +1,17 @@
+/**
+* Copyright (c) 2016 Giuliano Decesares <giulianodecesares@gmail.com>. All rights reserved.
+* Released under the GPL3 license
+* https://opensource.org/licenses/GPL-3.0
+**/
+
 #include <string>
 #include <iostream>
 
 #include <assert.h>
 #include <regex>
 
-#include <compset/DocumentGeneratorInterface.h>
-#include <compset/Component.h>
+#include "DocumentGeneratorInterface.h"
+#include "Component.h"
 
 DataType GenerateTestXMLContent(void);
 
@@ -17,6 +23,32 @@ bool EquivalentLabels(std::string openingLabel, std::string closingLabel);
 
 void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator);
 void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator);
+
+void CheckAndPush(std::string content, const std::regex regex, std::vector<std::string>& container, bool isRow = false);
+
+// "Encapsulation" for the regex ugly complexity (The terrifying part is all here)
+struct XmlRegex
+{
+	const std::regex* openingLabel;
+	const std::regex* closingLabel;
+	const std::regex* openingAndClosingLabels;
+	const std::regex* dataRow;
+
+	XmlRegex()
+	{
+		// Any string that starts with < then anything with letters, numbers or underscore, and then >
+		this->openingLabel = new std::regex("\\<([a-zA-Z_0-9]*)\\>");
+
+		// Any string that starts with </ then anything with letters, numbers or underscore, and then >
+		this->closingLabel = new std::regex("\\<(/[a-zA-Z_0-9]*)\\>");
+
+		// Combination of both opening and closing label's regular expressions
+		this->openingAndClosingLabels = new std::regex("\\<(/[a-zA-Z_0-9]*)\\>|\\<([a-zA-Z_0-9]*)\\>");
+
+		// A complete xml data row. 1 -> tag, 2 -> parameters, 3 -> value
+		this->dataRow = new std::regex("<([\\w:]*)( [^<>]*)?>([^<>]*)</\\1>");
+	}
+};
 
 int main()
 {
@@ -34,7 +66,7 @@ DataType GenerateTestXMLContent(void)
 	DataType returnContent;
 	DatumType fieldContent;
 
-	fieldContent["last_name"] = "Doe";
+	fieldContent["last_name"] = "Doe and Joe";
 
 	returnContent.push_back(fieldContent);
 
@@ -54,6 +86,8 @@ bool CheckXMLContent(std::string xmlContent)
 		std::cout << "XML header bad syntax" << std::endl << std::endl;
 		result = false;
 	}
+
+	std::cout << "<-------------------------------------------->" << std::endl << std::endl;
 
 	if (CheckXMLBodyBalancedLabeling(xmlContent))
 	{
@@ -97,68 +131,44 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 
 	bool result = true;
 
-	std::cout << xmlContent.c_str() << std::endl << std::endl;
-
 	try {
-		// Any string that starts with </ then anything with letters, numbers or underscore, and then >
-		const std::regex xmlClosingLabel("\\<(/[a-zA-Z_0-9]*)\\>");
+		// All xml regular expressions encapsulation to better handling
+		XmlRegex xmlRegex;
 
-		// Any string that starts with < then anything with letters, numbers or underscore, and then >
-		const std::regex xmlOpeningLabel("\\<([a-zA-Z_0-9]*)\\>");
+		// All content regex to loop over every row in the file
+		const std::regex allContent("(.*)");
 
-		// Combination of both opening and closing label's regular expressions
-		const std::regex xmlOpeningAndClosingLabels("\\<(/[a-zA-Z_0-9]*)\\>|\\<([a-zA-Z_0-9]*)\\>");
+		// Get an ordered list with all XML body's data structure
+		std::vector<std::string> xmlExpressions;
 
-		// Filter entire content to obtain only xml labels
-		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), xmlOpeningAndClosingLabels);
+		// Go over all file content to obtain only file rows
+		std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), allContent);
 		std::sregex_iterator end;
-
-		std::vector<std::string> openingLabels;
-		std::vector<std::string> closingLabels;
 
 		// While content is available
 		while (next != end)
 		{
 			std::smatch match = *next;
+			std::string currentContent = match.str();
 
-			//std::cout << match.str() << std::endl << std::endl;
+			// First: check for ONLY opening label ('cause xml structure could be nested)
+			CheckAndPush(currentContent, *xmlRegex.openingLabel, xmlExpressions);
 
-			// Filter only closing labels
-			if (std::regex_match(match.str(), xmlOpeningLabel))
-			{
-				openingLabels.push_back(match.str());
-			
-			} // Else filter only opening labels
-			else if (std::regex_match(match.str(), xmlClosingLabel))
-			{
-				closingLabels.push_back(match.str());
-			}
+			// Second: check for ONLY xml row (if so, then parse xml row with default parameter <bad code disclaimer>)
+			CheckAndPush(currentContent, *xmlRegex.dataRow, xmlExpressions, true);
+
+			// Third check for closing label
+			CheckAndPush(currentContent, *xmlRegex.closingLabel, xmlExpressions);
 
 			next++;
 		}
 
-		// Revert one vector, 'cause labels are stored in an inverted order due the nature of xml files
-		std::reverse(closingLabels.begin(), closingLabels.end());
+		// Once that is done, check the resultant container
 
-		// Compare the size of the vectors first. There must be the same number of opening and closing labels.
-		if (openingLabels.size() == closingLabels.size())
+		for (int index = 0; index < xmlExpressions.size(); index++)
 		{
-			// After that, compare label by label as long as result equals true
-			for (int index = 0; index < openingLabels.size(); index++)
-			{
-				if (EquivalentLabels(openingLabels[index], closingLabels[index]) == false)
-				{
-					result = false;
-					break; // !!
-				}
-			}
+			std::cout << xmlExpressions[index] << std::endl;
 		}
-		else
-		{
-			std::cout << "The opening-labels amount differs from the closing-labels amount" << std::endl << std::endl;
-			result = false;
-		}
-
 	}
 	catch (std::regex_error& e)
 	{
@@ -198,7 +208,7 @@ void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator)
 	xmlGenerator->setContent(data);
 
 	// XML document generator content print
-	// PrintXMLContent(xmlGenerator);
+	PrintXMLContent(xmlGenerator);
 
 	// XML document generator content check
 	CheckXMLContent(xmlGenerator->getDocument());
@@ -206,5 +216,32 @@ void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator)
 
 void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator)
 {
-	std::cout << xmlGenerator->getDocument() << std::endl;
+	std::cout << "<----------> Printing xml content <---------->" << std::endl << std::endl;
+	std::cout << xmlGenerator->getDocument() << std::endl << std::endl;
+	std::cout << "<-------------> End of content <------------->" << std::endl << std::endl << std::endl << std::endl;
+}
+
+void CheckAndPush(std::string content, const std::regex regex, std::vector<std::string>& container, bool isRow = false)
+{
+	std::sregex_iterator subNext(content.begin(), content.end(), regex);
+	std::sregex_iterator subEnd;
+
+	while (subNext != subEnd)
+	{
+		std::smatch subMatch = *subNext;
+
+		if (!subMatch.empty())
+		{
+			if (isRow)
+			{
+				container.push_back(subMatch[3].str());
+			}
+			else
+			{
+				container.push_back(subMatch.str());
+			}
+		}		
+
+		subNext++;
+	}
 }
