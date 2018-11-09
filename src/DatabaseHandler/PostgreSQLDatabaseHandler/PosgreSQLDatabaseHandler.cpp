@@ -15,18 +15,21 @@
 #include <compset/DatabaseHandlerInterface.h>
 #include <compset/ComponentInterface.h>
 
+typedef std::unordered_map< std::string, std::string > Row; 
+typedef std::vector< Row > Table; 
+
 class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public ComponentInterface {
 
     public:
         PosgreSQLDatabaseHandler() ;
         virtual ~PosgreSQLDatabaseHandler() ;
         virtual bool getErrorStatus() ;
-        virtual DatabaseHandlerInterface* setQuery( std::string query ) ;
+        virtual void prepareQuery( std::string query ) ;
         virtual DatabaseHandlerInterface* setStoredProcedure( std::string storedProcedure ) ;
-        virtual DatabaseHandlerInterface* addParameter( std::string key, std::string value ) ;
-        virtual void execQuery() ;
-        virtual DatumType fetch() ;
-        virtual DataType fetchAll() ;
+        virtual void addParameter( int key, std::string value ) ;
+        virtual void execute() ;
+        virtual Row fetch() ;
+        virtual Table fetchAll() ;
 
         //ComponentInterface:
         bool implements(std::string interfaceName);
@@ -60,9 +63,10 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
 
 PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
 
-    ReadConfig() ;
+    std::cout<< "test" << std::endl ;
+    // ReadConfig() ;
 
-    PGconn* cnn = NULL ;
+/*     PGconn* cnn = NULL ;
     PGresult* result = NULL ;
     qSQL = "" ;
 
@@ -85,7 +89,7 @@ PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
 		printf( "Error de conexion!<br>\n" ) ;
 		PQfinish(cnn) ;
 		connected = false ;
-	}
+	} */
 }
 
 PosgreSQLDatabaseHandler::~PosgreSQLDatabaseHandler() {
@@ -95,9 +99,9 @@ PosgreSQLDatabaseHandler::~PosgreSQLDatabaseHandler() {
 	}
 }
 
-// DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setQuery( std::string query ) {
-//     qSQL = query ;
-// }
+void PosgreSQLDatabaseHandler::prepareQuery( std::string query ) {
+    qSQL = query ;
+}
 
 void PosgreSQLDatabaseHandler::ReadConfig() {
 	std::string data[6];
@@ -124,7 +128,7 @@ void PosgreSQLDatabaseHandler::ReadConfig() {
     passwd = data[5].c_str() ;
 }
 
-void PosgreSQLDatabaseHandler::execQuery() {
+void PosgreSQLDatabaseHandler::execute() {
 
     int i = 0 ;    
     
@@ -161,28 +165,21 @@ bool PosgreSQLDatabaseHandler::getErrorStatus() {
     return ( PQstatus(cnn) == CONNECTION_BAD ) ;
 }
 
-
-DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setQuery( std::string query ) {
-
-    DatabaseHandlerInterface* result = new PosgreSQLDatabaseHandler() ;
-    return result ;
-}
 DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setStoredProcedure( std::string storedProcedure ) {
     DatabaseHandlerInterface* result = new PosgreSQLDatabaseHandler() ;
     return result ;
 }
-DatabaseHandlerInterface* PosgreSQLDatabaseHandler::addParameter( std::string key, std::string value ) {
-    DatabaseHandlerInterface* result = new PosgreSQLDatabaseHandler() ;
+void PosgreSQLDatabaseHandler::addParameter( int key, std::string value ) {
+    
+}
+
+Row PosgreSQLDatabaseHandler::fetch() {
+    Row result ;
     return result ;
 }
 
-DatumType PosgreSQLDatabaseHandler::fetch() {
-    DatumType result ;
-    return result ;
-}
-
-DataType PosgreSQLDatabaseHandler::fetchAll() {
-    DataType result ;
+Table PosgreSQLDatabaseHandler::fetchAll() {
+    Table result ;
     return result ;
 }
 

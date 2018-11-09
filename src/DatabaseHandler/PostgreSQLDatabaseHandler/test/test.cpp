@@ -18,9 +18,10 @@ int main()
 {
     ComponentFactory* componentFactoryObject = new ComponentFactory();
     componentFactoryObject->setInterfaceName("DatabaseHandlerInterface");
-    ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../DatabaseHandler");
+    ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../PosgreSQLDatabaseHandler");
     DatabaseHandlerInterface* databaseHandlerObject = ( (DatabaseHandlerInterface*) databaseHandlerComponent->getInstance() );
-    DataType allData = databaseHandlerObject->fetchAll();
+    databaseHandlerObject->prepareQuery( "SELECT * FROM Users;" ) ;
+
     delete componentFactoryObject;
 
     return 0;
