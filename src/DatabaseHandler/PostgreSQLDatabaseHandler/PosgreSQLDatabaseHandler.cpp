@@ -25,7 +25,6 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         virtual ~PosgreSQLDatabaseHandler() ;
         virtual bool getErrorStatus() ;
         virtual void prepareQuery( std::string query ) ;
-        virtual DatabaseHandlerInterface* setStoredProcedure( std::string storedProcedure ) ;
         virtual void addParameter( int key, std::string value ) ;
         virtual void execute() ;
         virtual Row fetch() ;
@@ -33,12 +32,8 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
 
         //ComponentInterface:
         bool implements(std::string interfaceName);
-        void* getInstance();
-        void release();
-        //PosgreSQLDatabaseHandler ( char* host, char* port, char* dataBase, char* user, char* passwd ) ;
-        // bool Connect() ;
-        // void Disconnect() ;
-        // int Show( char* table ) ;
+        void* getInstance() ;
+        void release() ;
 
     private:
         const char* host ;
@@ -46,6 +41,7 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         const char* port ;
         const char* user ;
         const char* passwd ;
+        bool isError ;
         PGconn* cnn ;
         PGresult* result ;
         bool connected ;
@@ -56,46 +52,34 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         bool implemented ;
 };
 
-// PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler() {
-//     PGconn *cnn = NULL;
-//     PGresult *result = NULL;
-// }
-
 PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
-
-    std::cout<< "test" << std::endl ;
     // ReadConfig() ;
 
-/*     PGconn* cnn = NULL ;
-    PGresult* result = NULL ;
+    cnn = NULL ;
+    result = NULL ;
     qSQL = "" ;
 
-	// cnn = PQsetdbLogin( host ,
-    //                     port , NULL , NULL ,
-    //                     dataBase , 
-    //                     user ,
-    //                     passwd);
-	cnn = PQsetdbLogin( host ,
-                        "3660" , NULL , NULL ,
+	cnn = PQsetdbLogin( "127.0.0.1" ,
+                        "5432" , NULL , NULL ,
                         "compset" , 
-                        "root" ,
+                        "postgres" ,
                         "root");
-
+                        
     if (PQstatus(cnn) != CONNECTION_BAD) {
-        printf( "Estamos conectados a PostgreSQL!<br>\n" ) ; 
         connected = true ;
         result = PQexec(cnn, "");
+        isError = false ;
 	} else {
-		printf( "Error de conexion!<br>\n" ) ;
-		PQfinish(cnn) ;
+		PQfinish( cnn ) ;
 		connected = false ;
-	} */
+        isError = true ;
+	}
 }
 
 PosgreSQLDatabaseHandler::~PosgreSQLDatabaseHandler() {
 	if ( connected ) {
-    	PQclear(result) ;
-    	PQfinish(cnn) ;
+    	PQclear( result ) ;
+    	PQfinish( cnn ) ;
 	}
 }
 
@@ -129,84 +113,43 @@ void PosgreSQLDatabaseHandler::ReadConfig() {
 }
 
 void PosgreSQLDatabaseHandler::execute() {
-
-    int i = 0 ;    
     
-    if (connected ) {
-        
-        result = PQexec(cnn, qSQL.c_str()) ;
-        
-        if (result != NULL) {
-            int tuplas = PQntuples(result);
-            int campos = PQnfields(result);
-            printf( "No. Filas: %i<br>\n", tuplas ) ;
-            printf( "No. Campos:%i<br>\n", campos ) ;
-            
-            printf( "Los nombres de los campos son:<br>\n" ) ;
-            
-            for (i=0; i<campos; i++) {
-                printf( "%s | ", PQfname(result,i) ) ;
-            }
-            
-            printf( "Contenido de la tabla<br>\n" ) ;
-            
-            for (i=0; i<tuplas; i++) {
-                for (int j=0; j<campos; j++) {
-                    printf( "%s | ",PQgetvalue(result,i,j) );
-                }
-                printf ( "<br>\n" ) ;
-            }
+    if ( connected ) {
+        PQclear( result );
+        result = PQexec( cnn , qSQL.c_str() ) ;
+        if ( result != NULL ) {
+            isError = false ;
+            // printf( "%s\n", PQerrorMessage( cnn ));
+        } else {
+            isError = true ;
+            // printf( "%s\n", PQerrorMessage( cnn ));
         }
     }
-
 }
 
 bool PosgreSQLDatabaseHandler::getErrorStatus() {
-    return ( PQstatus(cnn) == CONNECTION_BAD ) ;
+    return isError ;
 }
 
-DatabaseHandlerInterface* PosgreSQLDatabaseHandler::setStoredProcedure( std::string storedProcedure ) {
-    DatabaseHandlerInterface* result = new PosgreSQLDatabaseHandler() ;
-    return result ;
-}
 void PosgreSQLDatabaseHandler::addParameter( int key, std::string value ) {
-    
+    std::cout<< "parametro " << value << std::endl ;
 }
 
 Row PosgreSQLDatabaseHandler::fetch() {
-    Row result ;
-    return result ;
+    Row row ;
+    int columnCount = PQnfields(result);
+    for ( int i = 0 ; i < columnCount ; i++ ) {
+        std::string columnName = std::string( PQfname( result, i ) );
+        std::string columnValue = std::string( PQgetvalue( result , 0 , i ) );
+        row[columnName] = columnValue;    
+    }
+    return row; 
 }
 
 Table PosgreSQLDatabaseHandler::fetchAll() {
     Table result ;
     return result ;
 }
-
-/*
-bool Postgresql::ExecuteQuery( const char* query , IList< Tuple *> *rowsOfQuery){
-    result = PQexec(cnn, query);
-    if(PQresultStatus(result)==PGRES_TUPLES_OK){
-        ExecuteResponse(rowsOfQuery);
-    }
-    return ( PQresultStatus( result ) == PGRES_COMMAND_OK ) ? true : false ;
-}
-
-void Postgresql::ExecuteResponse(IList< Tuple *> *rowsOfQuery){
-	
-	int rows = PQntuples(result);
-	int fields = PQnfields(result);
-
-    for( int i=0; i<rows; i++ ) {
-        Tuple *tuple = new Tuple();
-        for (int f = 0; f < fields; f++){
-        	tuple->AddEntry(PQfname( result, f ), PQgetvalue( result, i, f ) ) ;
-        }
-        rowsOfQuery->Add( tuple ) ;
-    }
-    
-
-}*/
 
 //ComponentInterface:
 bool PosgreSQLDatabaseHandler::implements(std::string interfaceName)
