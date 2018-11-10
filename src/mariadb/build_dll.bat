@@ -1,1 +1,1 @@
-g++ -shared -Wall -std=c++11  -m32 -I../../include/ libmariadb.dll mdb.cpp -o ./bin/mdb-app.dll
+g++ -shared -Wall -std=c++11  -m32 -I../../include/ libmariadb.dll MdbDatabaseHandler.cpp -o ./bin/mdb-app.dll
