@@ -20,12 +20,14 @@ bool CheckXMLContent(std::string xmlContent);
 
 bool CheckXMLHeader(std::string xmlContent);
 bool CheckXMLBodyBalancedLabeling(std::string xmlContent);
-bool EquivalentLabels(std::string openingLabel, std::string closingLabel);
+bool EquivalentLabels(std::string openingLabel, std::string closingLabel, bool silent = false);
 
 void PrintXMLContent(Component<DocumentGeneratorInterface>& xmlGenerator);
 void XMLGeneratorPlayground(Component<DocumentGeneratorInterface>& xmlGenerator);
 
 void CheckAndPush(std::string content, const std::regex regex, std::vector<std::string>& container);
+
+std::vector<std::string> SplitXMLContent(std::string xmlContent);
 
 // "Encapsulation" for the regex ugly complexity (The terrifying part is all here)
 struct XmlRegex
@@ -80,6 +82,8 @@ DataType GenerateTestXMLContent(void)
 
 bool CheckXMLContent(std::string xmlContent)
 {
+	std::cout << "<----------> XML content checking <---------->" << std::endl << std::endl;
+
 	bool result = true;
 
 	if (CheckXMLHeader(xmlContent))
@@ -96,15 +100,15 @@ bool CheckXMLContent(std::string xmlContent)
 
 	if (CheckXMLBodyBalancedLabeling(xmlContent))
 	{
-		std::cout << std::endl;
 		std::cout << "XML body is correct!" << std::endl << std::endl;
 	}
 	else
 	{
-		std::cout << std::endl;
 		std::cout << "XML body bad syntax" << std::endl << std::endl;
 		result = false;
 	}
+
+	std::cout << "<------------> End of checking <------------->" << std::endl << std::endl;
 
 	return result;
 }
@@ -141,37 +145,10 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 	// All xml regular expressions encapsulation to better handling
 	XmlRegex xmlRegex;
 
-	// All content regex to loop over every row in the file
-	const std::regex allContent("(.*)");
+	// Split the xml content into elements to better handling
+	std::vector<std::string> xmlExpressions = SplitXMLContent(xmlContent);	
 
-	// Get an ordered list with all XML body's data structure
-	std::vector<std::string> xmlExpressions;
-
-	// Go over all file content to obtain only file rows
-	std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), allContent);
-	std::sregex_iterator end;
-
-	// While content is available
-	while (next != end)
-	{
-		std::smatch match = *next;
-		std::string currentContent = match.str();
-
-		//std::cout << "Current content " << currentContent.c_str() << std::endl;
-
-		// First: check for ONLY opening label ('cause xml structure could be nested)
-		CheckAndPush(currentContent, *xmlRegex.openingLabel, xmlExpressions);
-
-		// Second: check for ONLY xml data
-		CheckAndPush(currentContent, *xmlRegex.data, xmlExpressions);
-
-		// Third: check for closing label
-		CheckAndPush(currentContent, *xmlRegex.closingLabel, xmlExpressions);
-
-		next++;
-	}
-
-	// Once that is done, check the resultant container
+	// Check the resultant container
 
 	/*
 
@@ -225,68 +202,125 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 	i.e. -> <note> <to> Bla bla bla </to> </note>
 	*/
 
-	std::stack<std::string> stack;
-
-	//for (int index = 0; index < xmlExpressions.size(); index++)
-	//{
-	//	std::cout << "Stack value is: " << xmlExpressions[index] << std::endl << std::endl;
-	//}
-
-	std::cout << std::endl;
+	// Check second invariant: it should be the exact number of opening and closing tags
+	std::vector<std::string> closingTags;
+	std::vector<std::string> openingTags;
 
 	for (int index = 0; index < xmlExpressions.size(); index++)
 	{
 		if (std::regex_match(xmlExpressions[index], *xmlRegex.openingLabel))
-		{
-			// Is opening label case
-			stack.push(xmlExpressions[index]);
-			std::cout << "Opening label found: " << xmlExpressions[index] << std::endl;
-		}
-		else if (std::regex_match(xmlExpressions[index], *xmlRegex.data))
-		{
-			// Is value case
-			std::cout << "XML value found: " << xmlExpressions[index] << std::endl;
+			openingTags.push_back(xmlExpressions[index]);
+		else if (std::regex_match(xmlExpressions[index], *xmlRegex.closingLabel))
+			closingTags.push_back(xmlExpressions[index]);
+	}
 
-			// Search for closing label
-			if (std::regex_match(xmlExpressions[index + 1], *xmlRegex.closingLabel))
+	std::reverse(std::begin(closingTags), std::end(closingTags));
+
+	if (openingTags.size() > closingTags.size())
+	{
+		std::cout << "Syntax error. More closing tags needed" << std::endl << std::endl;
+
+		for (int index = 0; index < closingTags.size(); index++)
+		{
+			if (EquivalentLabels(openingTags[index], closingTags[index], true))
 			{
-				std::cout << "Closing label found: " << xmlExpressions[index + 1] << std::endl;
+				openingTags[index] = "";				
+			}
+		}
 
-				// Check for label equivalency in labels of value
-				if (EquivalentLabels(stack.top(), xmlExpressions[index + 1]))
+		for (int index = 0; index < openingTags.size(); index++)
+		{
+			if (openingTags[index] != "")
+			{
+				std::cout << "Missing closing tag for " << openingTags[index] << std::endl << std::endl;
+			}
+		}
+
+		result = false;
+	}
+	else if (closingTags.size() > openingTags.size())
+	{
+		std::cout << "Syntax error. More opening tags needed" << std::endl << std::endl;
+
+		for (int index = 0; index < openingTags.size(); index++)
+		{
+			if (EquivalentLabels(openingTags[index], closingTags[index], true))
+			{
+				closingTags[index] = "";
+			}
+		}
+
+		for (int index = 0; index < closingTags.size(); index++)
+		{
+			if (closingTags[index] != "")
+			{
+				std::cout << "Missing opening tag for " << closingTags[index] << std::endl << std::endl;
+			}
+		}
+
+		result = false;
+	}
+
+	// Check both first and third invariant
+
+	std::stack<std::string> stack;
+
+	if (result == true)
+	{
+		for (int index = 0; index < xmlExpressions.size(); index++)
+		{
+			if (std::regex_match(xmlExpressions[index], *xmlRegex.openingLabel))
+			{
+				// Is opening label case
+				stack.push(xmlExpressions[index]);
+				std::cout << "Opening label found: " << xmlExpressions[index] << std::endl;
+			}
+			else if (std::regex_match(xmlExpressions[index], *xmlRegex.data))
+			{
+				// Is value case
+				std::cout << "XML value found: " << xmlExpressions[index] << std::endl;
+
+				// Search for closing label
+				if (std::regex_match(xmlExpressions[index + 1], *xmlRegex.closingLabel))
 				{
-					// Equivalent case
-					stack.pop();
-					index++;
+					std::cout << "Closing label found: " << xmlExpressions[index + 1] << std::endl;
+
+					// Check for label equivalency in labels of value
+					if (EquivalentLabels(stack.top(), xmlExpressions[index + 1]))
+					{
+						// Equivalent case
+						stack.pop();
+						index++;
+					}
+					else
+					{
+						// Unequivalent case
+						result = false;
+						std::cout << "Unequivalent labels error for: " << stack.top() << " and " << xmlExpressions[index + 1] << std::endl;
+						stack.pop();
+					}
+
 				}
 				else
 				{
-					// Unequivalent case
+					result = false;
+					std::cout << "Closing label error for: " << xmlExpressions[index] << std::endl;
+				}
+			}
+			else if (std::regex_match(xmlExpressions[index], *xmlRegex.closingLabel))
+			{
+				// Is closing label case. Verify label equivalency with previous label
+
+				if (EquivalentLabels(stack.top(), xmlExpressions[index]))
+				{
+					stack.pop();
+				}
+				else
+				{
 					result = false;
 					std::cout << "Unequivalent labels error for: " << stack.top() << " and " << xmlExpressions[index + 1] << std::endl;
 					stack.pop();
 				}
-
-			}
-			else
-			{
-				result = false;
-				std::cout << "Closing label error for: " << xmlExpressions[index] << std::endl;
-			}
-		}
-		else if (std::regex_match(xmlExpressions[index], *xmlRegex.closingLabel))
-		{
-			// Is closing label case. Verify label equivalency with previous label
-
-			if (EquivalentLabels(stack.top(), xmlExpressions[index]))
-			{
-				stack.pop();
-			}
-			else
-			{
-				result = false;
-				std::cout << "Unequivalent labels error for: " << stack.top() << " and " << xmlExpressions[index + 1] << std::endl;
-				stack.pop();
 			}
 		}
 	}
@@ -294,7 +328,7 @@ bool CheckXMLBodyBalancedLabeling(std::string xmlContent)
 	return result;
 }
 
-bool EquivalentLabels(std::string openingLabel, std::string closingLabel)
+bool EquivalentLabels(std::string openingLabel, std::string closingLabel, bool silent)
 {
 	bool result = true;
 
@@ -307,13 +341,16 @@ bool EquivalentLabels(std::string openingLabel, std::string closingLabel)
 	// Then compare both labels
 	result = openingLabel == newClosingLabel;
 
-	if (result == false)
+	if (silent == false)
 	{
-		std::cout << "Bad syntax with labels " << openingLabel.c_str() << " and " << closingLabel.c_str() << std::endl;
-	}
-	else
-	{
-		std::cout << "Equivalent labels " << openingLabel.c_str() << " and " << closingLabel.c_str() << std::endl;
+		if (result == false)
+		{
+			std::cout << "Bad syntax with labels " << openingLabel.c_str() << " and " << closingLabel.c_str() << std::endl;
+		}
+		else
+		{
+			std::cout << "Equivalent labels " << openingLabel.c_str() << " and " << closingLabel.c_str() << std::endl;
+		}
 	}
 
 	return result;
@@ -364,4 +401,42 @@ void CheckAndPush(std::string content, const std::regex regex, std::vector<std::
 	{
 		std::cout << "Syntax error in the regular expression" << std::endl << std::endl;
 	}
+}
+
+std::vector<std::string> SplitXMLContent(std::string xmlContent)
+{
+	// All xml regular expressions encapsulation to better handling
+	XmlRegex xmlRegex;
+
+	// All content regex to loop over every row in the file
+	const std::regex allContent("(.*)");
+
+	// Get an ordered list with all XML body's data structure
+	std::vector<std::string> returnVector;
+
+	// Go over all file content to obtain only file rows
+	std::sregex_iterator next(xmlContent.begin(), xmlContent.end(), allContent);
+	std::sregex_iterator end;
+
+	// While content is available
+	while (next != end)
+	{
+		std::smatch match = *next;
+		std::string currentContent = match.str();
+
+		//std::cout << "Current content " << currentContent.c_str() << std::endl;
+
+		// First: check for ONLY opening label ('cause xml structure could be nested)
+		CheckAndPush(currentContent, *xmlRegex.openingLabel, returnVector);
+
+		// Second: check for ONLY xml data
+		CheckAndPush(currentContent, *xmlRegex.data, returnVector);
+
+		// Third: check for closing label
+		CheckAndPush(currentContent, *xmlRegex.closingLabel, returnVector);
+
+		next++;
+	}
+
+	return returnVector;
 }
