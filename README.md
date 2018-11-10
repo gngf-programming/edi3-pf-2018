@@ -14,20 +14,23 @@ Proyecto final EDI 3 2018
     </li>
     <li>Integrar biblioteca de tercero https://github.com/nlohmann/json con la interface de "DocumentGenerator". unordered_map<string, string> o directamente pasar de la consulta a la base de datos al tipo json:
         <ul>
-            <li>Francisco y Florencia</li>
+            <li>Francisco y Florencia -> Escribir pruebas de uso de json</li>
         </ul>
     </li>
-    <li>Base Datos: implementar las tablas necesarias para Authentication y Authorization. Escribir los procedimientos de alta, baja y modificación de las tablas users, roles, actions:
+    <li>Base Datos: implementar las tablas necesarias para Authentication y Authorization. Escribir los procedimientos de alta, baja y modificación de las tablas users, roles, actions y escribir un componente de incialización de base de datos:
         <ul>
-            <li>Facundo</li>
+            <li>Facundo -> componente de inicialización de base de datos</li>
         </ul>
     </li>
     <li>QA: Pruebas contras las interfaces, no es necesario frameworks, pero pueden usar assert, etc:
         <ul>
             <li>Giuliano -> XmlDocumentGenerator</li>
-            <li>Boris</li>
             <li>Lucas -> RequestHandler (formato estándar URI)</li>
-            <li>Hernán</li>
+            <li>Hernán -> PostgreDatabaseHandler</li>
+            <li>Dai -> ComponentFactory</li>
+            <li>Celeste -> JsonDocumentGenerator</li>
+            <li>Paula -> ResponseHandler</li>
         </ul>
     </li>
+    <li>Boris (una actividad especial)-> completar LibraryLoader para dar soporte a Apple OSx y crear útil/helper -> lector de archivos .ini: IniReader.h</li>
 </ol>

@@ -18,17 +18,19 @@
 
 #include <mysql.h>
 
+typedef std::unordered_map< std::string, std::string > Row; 
+typedef std::vector< Row > Table; 
+
 class MdbDatabaseHandler : public DatabaseHandlerInterfaz , public ComponentInterface {
 
         MdbDatabaseHandler() ;
         virtual ~MdbDatabaseHandler() ;
         virtual bool getErrorStatus() ;
-        virtual DatabaseHandlerInterface * setQuery( std::string query ) ;
-        virtual DatabaseHandlerInterface * setStoredProcedure( std::string storedProcedure ) ;
-        virtual DatabaseHandlerInterface * addParameter( std::string key, std::string value ) ;
-        virtual void execQuery() ;
-        virtual DatumType fetch() ;
-        virtual DataType fetchAll() ;
+        virtual void prepareQuery( std::string query ) ;
+        virtual void addParameter( int key, std::string value ) ;
+        virtual void execute() ;
+        virtual Row fetch() ;
+        virtual Table fetchAll() ;
 
         bool implements( std::string interfaceName ) ; 
         void * getInstance() ;

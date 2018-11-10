@@ -39,44 +39,38 @@ bool MdbDatabaseHandler::getErrorStatus() {
         return ( mysql_error(conn)[0] != '\0' ) ? true : false ;
 };
 
-DatabaseHandlerInterface* MdbDatabaseHandler::setQuery(std::string query){
+void MdbDatabaseHandler::prepareQuery(std::string query){
     
     setQuery = query ;
-    return *this ;
+    
+};
+
+
+
+void MdbDatabaseHandler::addParameter(std::string key, std::string value){
+
+    return null;
 
 };
 
-DatabaseHandlerInterface* MdbDatabaseHandler::setStoredProcedure(std::string storedProcedure){
-   
-    DatabaseHandlerInterface* r = NULL ;
-    return r ;
-
-};
-
-DatabaseHandlerInterface* MdbDatabaseHandler::addParameter(std::string key, std::string value){
-        DatabaseHandlerInterface* r = NULL ;
-        return r ;
-
-};
-
-void MdbDatabaseHandler::execQuery() {
+void MdbDatabaseHandler::execute() {
     
     unsigned int result = 0;
-    result = mysql_query(conn,setQuery);
+    result = mysql_query(conn,setQuery.c_str());
 
     return (result == 0) ? NULL : printf("No se ha podido realiar la consulta.. \n") ; // try ...
     
 };
 
-DatumType MdbDatabaseHandler::fetch(){
+Row MdbDatabaseHandler::fetch(){
     
-    DatumType result = 0;
+    Row result = 0;
     return result ;
 
 };
 
-DataType MdbDatabaseHandler::fetchAll(){
-    DataType result = 0 ;
+Table MdbDatabaseHandler::fetchAll(){
+    Table result = 0 ;
     return result ;
 };
 

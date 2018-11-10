@@ -15,6 +15,8 @@ int portableSetEnv(const char* name, const char* value, int overwrite)
     int result;
     #ifdef __unix__
         result = setenv(name, value, overwrite);
+    #elif __APPLE__
+        result = setenv(name, value, overwrite);
     #elif defined(_WIN32) || defined(WIN32)
         char env[1024];
         strcpy( env, name );
