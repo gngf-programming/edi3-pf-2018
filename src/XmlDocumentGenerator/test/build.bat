@@ -1,2 +1,2 @@
-g++ -Wall -std=c++11 -I../../../include/ test.cpp -o test.exe
+g++ -Wall -std=c++11 -I../../../include/compset/ test.cpp -o test.exe
 pause
