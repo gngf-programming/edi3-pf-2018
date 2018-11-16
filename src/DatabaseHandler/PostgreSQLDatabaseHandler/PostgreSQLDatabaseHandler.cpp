@@ -18,11 +18,11 @@
 typedef std::unordered_map< std::string, std::string > Row; 
 typedef std::vector< Row > Table; 
 
-class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public ComponentInterface {
+class PostgeSQLDatabaseHandler : public DatabaseHandlerInterface, public ComponentInterface {
 
     public:
-        PosgreSQLDatabaseHandler() ;
-        virtual ~PosgreSQLDatabaseHandler() ;
+        PostgeSQLDatabaseHandler() ;
+        virtual ~PostgeSQLDatabaseHandler() ;
         virtual bool getErrorStatus() ;
         virtual void prepareQuery( std::string query ) ;
         virtual void addParameter( int key, std::string value ) ;
@@ -52,7 +52,7 @@ class PosgreSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         bool implemented ;
 };
 
-PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
+PostgeSQLDatabaseHandler::PostgeSQLDatabaseHandler () {
     // ReadConfig() ;
 
     cnn = NULL ;
@@ -76,18 +76,34 @@ PosgreSQLDatabaseHandler::PosgreSQLDatabaseHandler () {
 	}
 }
 
-PosgreSQLDatabaseHandler::~PosgreSQLDatabaseHandler() {
+PostgeSQLDatabaseHandler::~PostgeSQLDatabaseHandler() {
 	if ( connected ) {
     	PQclear( result ) ;
     	PQfinish( cnn ) ;
 	}
 }
 
-void PosgreSQLDatabaseHandler::prepareQuery( std::string query ) {
+void PostgeSQLDatabaseHandler::prepareQuery( std::string query ) {
     qSQL = query ;
 }
 
-void PosgreSQLDatabaseHandler::ReadConfig() {
+void PostgeSQLDatabaseHandler::addParameter( int key, std::string value ) {
+    const char *paramValues[1];
+    
+    paramValues[0] = value.c_str() ;
+    
+    result = PQexecParams( cnn, qSQL.c_str(), key, NULL, paramValues, NULL, NULL, 0 ) ;
+    // std::cout<< "parametro " << value << std::endl ;
+    if ( PQresultStatus( result ) != PGRES_TUPLES_OK )
+    {
+        isError = true ;
+        // fprintf(stderr, "SELECT failed: %s", PQerrorMessage(conn));
+        PQclear(result);
+        // exit_nicely(conn);
+    }
+}
+
+void PostgeSQLDatabaseHandler::ReadConfig() {
 	std::string data[6];
     std::ifstream inifile;
 
@@ -112,7 +128,7 @@ void PosgreSQLDatabaseHandler::ReadConfig() {
     passwd = data[5].c_str() ;
 }
 
-void PosgreSQLDatabaseHandler::execute() {
+void PostgeSQLDatabaseHandler::execute() {
     
     if ( connected ) {
         PQclear( result );
@@ -127,15 +143,11 @@ void PosgreSQLDatabaseHandler::execute() {
     }
 }
 
-bool PosgreSQLDatabaseHandler::getErrorStatus() {
+bool PostgeSQLDatabaseHandler::getErrorStatus() {
     return isError ;
 }
 
-void PosgreSQLDatabaseHandler::addParameter( int key, std::string value ) {
-    std::cout<< "parametro " << value << std::endl ;
-}
-
-Row PosgreSQLDatabaseHandler::fetch() {
+Row PostgeSQLDatabaseHandler::fetch() {
     Row row ;
     int columnCount = PQnfields(result);
     for ( int i = 0 ; i < columnCount ; i++ ) {
@@ -146,26 +158,26 @@ Row PosgreSQLDatabaseHandler::fetch() {
     return row; 
 }
 
-Table PosgreSQLDatabaseHandler::fetchAll() {
+Table PostgeSQLDatabaseHandler::fetchAll() {
     Table result ;
     return result ;
 }
 
 //ComponentInterface:
-bool PosgreSQLDatabaseHandler::implements(std::string interfaceName)
+bool PostgeSQLDatabaseHandler::implements(std::string interfaceName)
 {
     return (interfaceName == "ComponentInterface" || interfaceName == "DatabaseHandlerInterface") ?
         implemented = true
             : implemented = false;
 }
 
-void* PosgreSQLDatabaseHandler::getInstance()
+void* PostgeSQLDatabaseHandler::getInstance()
 {
     if(implemented) {  referenceCounter++;  return this; }
     return NULL;
 }
 
-void PosgreSQLDatabaseHandler::release()
+void PostgeSQLDatabaseHandler::release()
 {
     referenceCounter--;
     if(referenceCounter <= 0) delete this;
@@ -175,5 +187,5 @@ extern "C" ComponentInterface* create();
 
 ComponentInterface* create()
 {
-    return (ComponentInterface*) new PosgreSQLDatabaseHandler;
+    return (ComponentInterface*) new PostgeSQLDatabaseHandler;
 }

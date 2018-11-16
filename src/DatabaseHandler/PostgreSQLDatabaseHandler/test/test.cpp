@@ -21,11 +21,11 @@ int main()
 {
     ComponentFactory* componentFactoryObject = new ComponentFactory();
     componentFactoryObject->setInterfaceName("DatabaseHandlerInterface");
-    ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../PosgreSQLDatabaseHandler");
+    ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../PostgreSQLDatabaseHandler");
     DatabaseHandlerInterface* databaseHandlerObject = ( (DatabaseHandlerInterface*) databaseHandlerComponent->getInstance() );
-    databaseHandlerObject->prepareQuery( "SELECT * FROM users" ) ; // WHERE %i = %j" ) ;
-    databaseHandlerObject->addParameter( 0, "gabi") ;
-    databaseHandlerObject->execute() ;
+    databaseHandlerObject->prepareQuery( "SELECT * FROM USERS WHERE identifier = $1" ) ;
+    databaseHandlerObject->addParameter( 1, "leo") ;
+    // databaseHandlerObject->execute() ;
     Row firstRow = databaseHandlerObject->fetch() ;
 
     // Row::iterator it = firstRow.begin() ;
