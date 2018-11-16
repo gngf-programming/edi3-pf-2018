@@ -111,7 +111,7 @@ void PostgeSQLDatabaseHandler::ReadConfig() {
 	archivo.open("leer.txt",ios::in);
 
 	if (archivo.fail()){
-		cout<<"no se pudo leer";
+		std::cout<<"no se pudo leer";
 	}
 	int i=0;
 	while( !archivo.eof() ) {
@@ -124,7 +124,7 @@ void PostgeSQLDatabaseHandler::ReadConfig() {
         Port = texto[2] ;
         User = texto[3] ;
         Password = texto[4] ;
-        Provider = texto[5] ;
+        
     }
 }
 
