@@ -177,3 +177,39 @@ ComponentInterface* create()
 {
     return (ComponentInterface*) new PosgreSQLDatabaseHandler;
 }
+/* void readfile();
+
+    int main()
+{
+    readfile();
+
+    return 0;
+}
+void readfile(){
+
+	ifstream archivo;
+	string texto[10];
+	string Database,Host,Port, User, Password, Provider;
+
+	archivo.open("leer.txt",ios::in);
+
+	if (archivo.fail()){
+		cout<<"no se pudo leer";
+	}
+	int i=0;
+	while(!archivo.eof()){
+
+    getline(archivo,texto[i]);
+
+    cout<<texto[i]<<endl;
+    i++;
+    Database=texto[0];
+    Host=texto[1];
+    Port=texto[2];
+    User=texto[3];
+    Password=texto[4];
+    Provider=texto[5];
+    }
+
+
+}*/
