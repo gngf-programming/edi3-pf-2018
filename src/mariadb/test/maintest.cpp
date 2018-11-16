@@ -15,19 +15,10 @@ int main()
     componentFactoryObject->setInterfaceName("DatabaseHandlerInterface");
     ComponentInterface* databaseHandlerComponent = componentFactoryObject->createFrom("../bin/mdb-app");
     DatabaseHandlerInterface* databaseHandlerObject = ( (DatabaseHandlerInterface*) databaseHandlerComponent->getInstance() );
-    databaseHandlerObject->prepareQuery( "SELECT * FROM users" ) ; // WHERE %i = %j" ) ;
-    databaseHandlerObject->addParameter( 0, "gabi") ;
+    databaseHandlerObject->prepareQuery( "CREATE TABLE Programadores(Id INT, Name varchar(45), edad INT)" ) ; // WHERE %i = %j" ) ;
+//    databaseHandlerObject->addParameter( ) ;
     databaseHandlerObject->execute() ;
-   // Row firstRow = databaseHandlerObject->fetch() ;
 
-  
-
- /*   for (std::pair<std::string, std::string> element : firstRow )
-    {
-        std::cout << element.first << " :: " << element.second << std::endl ;
-    }
-
- */
     system("pause");
     delete componentFactoryObject;
 
