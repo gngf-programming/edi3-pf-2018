@@ -104,28 +104,28 @@ void PostgeSQLDatabaseHandler::addParameter( int key, std::string value ) {
 }
 
 void PostgeSQLDatabaseHandler::ReadConfig() {
-	std::string data[6];
-    std::ifstream inifile;
+	std::ifstream archivo;
+	std::string texto[10];
+	std::string Database, Host, Port, User, Password, Provider ;
 
-	inifile.open( "config.ini", std::ios::in );
+	archivo.open("leer.txt",ios::in);
 
-	if ( inifile.fail() ){
-		std::cout << "no se pudo leer" ;
+	if (archivo.fail()){
+		cout<<"no se pudo leer";
 	}
+	int i=0;
+	while( !archivo.eof() ) {
+        getline(archivo,texto[i]);
 
-	int i = 0 ;
-	while( !inifile.eof() ) {
-
-		std::getline( inifile , data[i] ) ;
-		std::cout << data[i] << std::endl ;
-                i++;
+        std::cout << texto[i] << endl ;
+        i++ ;
+        Database = texto[0] ;
+        Host = texto[1] ;
+        Port = texto[2] ;
+        User = texto[3] ;
+        Password = texto[4] ;
+        Provider = texto[5] ;
     }
-
-    host = data[1].c_str() ;
-    dataBase = data[2].c_str() ;
-    port = data[3].c_str() ;
-    user = data[4].c_str() ;
-    passwd = data[5].c_str() ;
 }
 
 void PostgeSQLDatabaseHandler::execute() {
