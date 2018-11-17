@@ -1,7 +1,13 @@
+/*
+-- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved. 
+-- File: DBGeneratorMariaDB\DBGeneratorMariaDB.h. This file is part of COMPSET.
+-- Released under the GPL3 license
+-- https://opensource.org/licenses/GPL-3.0
+*/
+
 #include <DBGeneratorMariaDB.h>
 
 
-// a sample exported function
 DBGeneratorMariaDB::DBGeneratorMariaDB() : referenceCounter(0){
     MY_HOSTNAME = "localhost";
     MY_DATABASE = "compset";
