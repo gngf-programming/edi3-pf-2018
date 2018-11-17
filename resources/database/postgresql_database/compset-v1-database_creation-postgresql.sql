@@ -1,7 +1,7 @@
--- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved.  
--- This file is part of COMPSET. 
--- Released under the GPL3 license 
--- https://opensource.org/licenses/GPL-3.0 
+-- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved. 
+-- File: compset-v1-database_creation-postgresql.sql. This file is part of COMPSET.
+-- Released under the GPL3 license
+-- https://opensource.org/licenses/GPL-3.0
 
 -- ----------------------------------------
 -- Creating database "compset"

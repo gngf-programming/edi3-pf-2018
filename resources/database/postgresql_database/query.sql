@@ -1,3 +1,8 @@
+-- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved. 
+-- File: query.sql. This file is part of COMPSET.
+-- Released under the GPL3 license
+-- https://opensource.org/licenses/GPL-3.0
+
 -- TABLES AND COLLATION
 DROP COLLATION IF EXISTS public.utf8_unicode CASCADE;
 CREATE COLLATION public.utf8_unicode FROM pg_catalog."und-x-icu";
