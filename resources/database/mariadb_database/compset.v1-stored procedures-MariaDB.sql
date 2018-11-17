@@ -1,9 +1,8 @@
 -- ----------------------------------------
--- ----------------------------------------
 -- Stored Procedures for MariaDB database
 -- ----------------------------------------
 -- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved. 
--- This file is part of COMPSET.
+-- File: compset.v1-stored procedures-MariaDB.sql. This file is part of COMPSET.
 -- Released under the GPL3 license
 -- https://opensource.org/licenses/GPL-3.0
 
