@@ -1,3 +1,10 @@
+/*
+-- Copyright (c) 2018 Facundo Campos <facundo.nicolas.campos@gmail.com>. All rights reserved. 
+-- File: sqlite_database\main.cpp. This file is part of COMPSET.
+-- Released under the GPL3 license
+-- https://opensource.org/licenses/GPL-3.0
+*/
+
 #include <iostream>
 #include <stdio.h>
 #include "lib/sqlite3.h"
