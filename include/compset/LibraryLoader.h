@@ -4,6 +4,9 @@
 * Released under the GPL3 license
 * https://opensource.org/licenses/GPL-3.0
 **/
+/**
+* Copyright (c) 2018 Leonardo Casales <leonardo@smartnet.com.ar> - Jonathan Egea. All rights reserved.
+**/
 
 #ifndef LIBRARY_LOADER_H
 #define LIBRARY_LOADER_H

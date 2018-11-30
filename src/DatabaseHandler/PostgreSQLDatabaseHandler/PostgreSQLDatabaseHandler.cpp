@@ -1,9 +1,7 @@
 /**
-* Copyright (c) 2018 Leonardo Casales - Jonathan Egea. All rights reserved. .0
+* Copyright (c) 2018 Leonardo Casales <leonardo@smartnet.com.ar> - Jonathan Egea. All rights reserved.
+* Released under the MIT license
 **/
-
-// #include <libpq-fe.h> // include\vendors\postgreSQL\libpq-fe.h
-// #include "/Library/PostgreSQL/11/include/libpq-fe.h"
 #include "libpq-fe.h"
 
 #include <iostream>
@@ -36,11 +34,11 @@ class PostgeSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
         void release() ;
 
     private:
-        const char* host ;
-        const char* dataBase ;
-        const char* port ;
-        const char* user ;
-        const char* passwd ;
+        std::string host ;
+        std::string dataBase ;
+        std::string port ;
+        std::string user ;
+        std::string passwd ;
         bool isError ;
         PGconn* cnn ;
         PGresult* result ;
@@ -53,17 +51,16 @@ class PostgeSQLDatabaseHandler : public DatabaseHandlerInterface, public Compone
 };
 
 PostgeSQLDatabaseHandler::PostgeSQLDatabaseHandler () {
-    // ReadConfig() ;
+    ReadConfig() ;
 
     cnn = NULL ;
     result = NULL ;
     qSQL = "" ;
-
-	cnn = PQsetdbLogin( "127.0.0.1" ,
-                        "5432" , NULL , NULL ,
-                        "compset" , 
-                        "postgres" ,
-                        "root");
+	cnn = PQsetdbLogin( host.c_str() ,
+                        port.c_str() , NULL , NULL ,
+                        dataBase.c_str() , 
+                        user.c_str() ,
+                        passwd.c_str() );
                         
     if (PQstatus(cnn) != CONNECTION_BAD) {
         connected = true ;
@@ -104,28 +101,25 @@ void PostgeSQLDatabaseHandler::addParameter( int key, std::string value ) {
 }
 
 void PostgeSQLDatabaseHandler::ReadConfig() {
-	std::ifstream archivo;
-	std::string texto[10];
-	std::string Database, Host, Port, User, Password, Provider ;
+	std::ifstream file;
+	std::string text[10];
 
-	archivo.open("leer.txt",ios::in);
+	file.open("config.txt", std::ios::in);
 
-	if (archivo.fail()){
-		std::cout<<"no se pudo leer";
+	if (file.fail()) {
+		std::cout << "no se reconoce archivo de configuración";
 	}
 	int i=0;
-	while( !archivo.eof() ) {
-        getline(archivo,texto[i]);
-
-        std::cout << texto[i] << endl ;
+	while( !file.eof() ) {
+        getline( file, text[i] );
+        // std::cout << text[i] << std::endl ;
         i++ ;
-        Database = texto[0] ;
-        Host = texto[1] ;
-        Port = texto[2] ;
-        User = texto[3] ;
-        Password = texto[4] ;
-        
     }
+    dataBase = text[0] ;
+    host = text[1] ;
+    port = text[2] ;
+    user = text[3] ;
+    passwd = text[4] ;
 }
 
 void PostgeSQLDatabaseHandler::execute() {
